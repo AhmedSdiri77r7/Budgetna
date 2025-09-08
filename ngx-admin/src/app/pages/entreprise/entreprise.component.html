@@ -1,0 +1,41 @@
+
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h2>Gestion <b>Entreprise</b></h2>
+                    </div>
+                    <div class="col-sm-7">
+                        <a (click)="onOpenDialogClick()" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Ajouter une Entreprise</span></a>
+                        <a (click)="exportAsXLSX()" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>						
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>						
+                        <th>Raison social</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let entreprise of entreprises">
+                        <td>{{entreprise.id}}</td>       
+                        <td>{{entreprise.name}}</td>
+                        <td>{{entreprise.raisonSocial}}</td>
+                        <td>
+                            <a  class="settings" title="Settings" data-toggle="tooltip" (click)="updateEntreprise(entreprise.id)"><i class="material-icons">&#xE8B8;</i></a>
+                            <a  class="delete" title="Delete" data-toggle="tooltip" (click)="deleteEntr(entreprise.id)"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+  </div>     

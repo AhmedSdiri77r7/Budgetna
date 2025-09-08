@@ -1,0 +1,123 @@
+/* Définition d'une largeur de conteneur pour l'interface */
+.step-container {
+  width: 100%;
+  max-width: 800px; /* Ajuste cette valeur selon la largeur que tu souhaites */
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Formulaire étape par étape */
+.mat-step {
+  margin: 15px 0;
+}
+
+.mat-step-header {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+input.form-control {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button.custom-button {
+  background-color: #03A9F4;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.custom-button:hover {
+  background-color: #0288d1;
+}
+
+/* Partie d'affichage de l'image */
+.image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 20px;
+}
+
+.image-container img {
+  max-width: 200px; /* Limiter la largeur de l'image */
+  max-height: 200px; /* Limiter la hauteur de l'image */
+  border-radius: 10px;
+  object-fit: cover; /* Garder les proportions de l'image sans la déformer */
+}
+
+.image-container p {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.image-container .no-image {
+  color: #f44336; /* Couleur rouge si l'image n'est pas disponible */
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .step-container {
+    padding: 15px;
+  }
+
+  .mat-step-header {
+    font-size: 16px;
+  }
+
+  button.custom-button {
+    width: 100%;
+    padding: 12px 0;
+  }
+
+  .image-container img {
+    max-width: 150px;
+    max-height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .step-container {
+    padding: 10px;
+  }
+
+  .mat-step-header {
+    font-size: 14px;
+  }
+
+  button.custom-button {
+    padding: 10px 0;
+    font-size: 14px;
+  }
+
+  .image-container img {
+    max-width: 120px;
+    max-height: 120px;
+  }
+
+  .image-container p {
+    font-size: 14px;
+  }
+}

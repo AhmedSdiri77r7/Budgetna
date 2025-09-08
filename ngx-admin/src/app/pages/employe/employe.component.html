@@ -1,0 +1,70 @@
+<div class="container-xl">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-5">
+            <h2>Gestion <b>Employé</b></h2>
+          </div>
+          <div class="col-sm-7">
+            <!-- Bouton pour ajouter un employé -->
+            <a (click)="onOpenDialogClick()" class="btn btn-secondary">
+              <i class="material-icons">&#xE147;</i>
+              <span>Ajouter un Employé</span>
+            </a>
+            <!-- Bouton pour exporter en Excel -->
+            <a (click)="exportAsXLSX()" class="btn btn-secondary">
+              <i class="material-icons">&#xE24D;</i>
+              <span>Exporter en Excel</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nom Prénom</th>
+            <th>Rôle</th>
+            <th>E-mail</th>
+            <th>Photo</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let employe of listemploye">
+            <td>{{ employe.id }}</td>
+            <td><a>{{ employe.nom + ' ' + employe.prenom }}</a></td>
+            <td>{{ employe.role }}</td>
+            <td>{{ employe.email }}</td>
+            <td>
+              <img *ngIf="employe.image"
+                   [src]="getImageUrl(employe.image)"
+                   [alt]="'Photo de ' + employe.nom"
+                   width="50" height="50"
+                   style="object-fit: cover; border-radius: 50%;">
+            </td>
+            <td>
+              <!-- Modifier -->
+              <button class="btn btn-link p-0 me-2" title="Affecter" (click)="updateEmploye(employe.id)">
+                <i class="material-icons text-primary">&#xE8B8;</i>
+              </button>
+
+              <!-- Supprimer -->
+              <button class="btn btn-link p-0 me-2" title="Supprimer" (click)="deleteEmploye(employe.id)">
+                <i class="material-icons text-danger">&#xE5C9;</i>
+              </button>
+
+              <!-- Upload Image -->
+              <label class="btn btn-link p-0 m-0" title="Uploader image">
+                <i class="material-icons text-success">&#xE2C6;</i>
+                <input type="file" hidden (change)="onImageSelected($event, employe.id)">
+              </label>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

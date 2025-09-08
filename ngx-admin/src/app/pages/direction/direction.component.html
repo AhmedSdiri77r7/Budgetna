@@ -1,0 +1,87 @@
+<div class="container-xl">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center">
+      <p>Loading directions...</p>
+    </div>
+  
+    <!-- Error State -->
+    <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Controls -->
+    <div class="table-wrapper" *ngIf="!isLoading && !errorMessage">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-5">
+            <h2>Gestion Des Directions</h2>
+          </div>
+          <div class="col-sm-7">
+            <input
+              type="text"
+              [(ngModel)]="search"
+              (input)="searchfct()"
+              class="form-control"
+              placeholder="Rechercher…"
+            />
+            <a (click)="onOpenDialogClick()" class="btn btn-secondary">
+              <i class="material-icons"></i> <span>Ajouter une Direction</span>
+            </a>
+            <a (click)="exportAsXLSX()" class="btn btn-secondary">
+              <i class="material-icons"></i> <span>Exporter en Excel</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Tables for Each Entreprise -->
+    <div
+      class="table-responsive"
+      *ngFor="let entreprise of groupedDirections | keyvalue"
+    >
+      <div class="table-wrapper">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-12">
+              <h3>Directions de <b>{{ entreprise.key }}</b></h3>
+            </div>
+          </div>
+        </div>
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let direction of entreprise.value">
+              <td>{{ direction.id }}</td>
+              <td>{{ direction.name }}</td>
+              <td>
+                <a
+                  class="settings"
+                  title="Modifier"
+                  (click)="updateDirection(direction.id)"
+                >
+                  <i class="material-icons"></i>
+                </a>
+                <a
+                  class="delete"
+                  title="Supprimer"
+                  (click)="deleteDirection(direction.id)"
+                >
+                  <i class="material-icons"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Empty State -->
+ 
+  </div>

@@ -1,0 +1,36 @@
+<div class="form-group">
+    <label for="nom">Nom</label>
+    <input type="text" class="form-control" id="nom" [(ngModel)]="employe.nom" name="nom">
+  </div>
+  
+  <div class="form-group">
+    <label for="prenom">Prénom</label>
+    <input type="text" class="form-control" id="prenom" [(ngModel)]="employe.prenom" name="prenom">
+  </div>
+  
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" class="form-control" id="email" [(ngModel)]="employe.email" name="email">
+  </div>
+  
+  <div class="form-group">
+    <label for="password">Mot de passe</label>
+    <input type="password" class="form-control" id="password" [(ngModel)]="employe.password" name="password">
+  </div>
+  
+  <div class="form-group">
+    <label for="role">Rôle</label>
+    <select id="role" class="form-control" [(ngModel)]="employe.role" name="role">
+      <option value="CHEF_DEPARTEMENT">CHEF_DEPARTEMENT</option>
+      <option value="ADMINISTRATEUR">ADMINISTRATEUR</option>
+      <option value="INGENIEUR">INGENIEUR</option>
+    </select>
+  </div>
+  
+
+  <div class="form-group text-center mt-3">
+    <button (click)="addEmploye()" type="button" class="btn btn-primary">
+      Ajouter l'employé
+    </button>
+  </div>
+  

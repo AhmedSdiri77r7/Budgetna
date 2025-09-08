@@ -1,0 +1,141 @@
+/* Add this to your existing CSS */
+/* tab1.component.scss */
+
+/* Container */
+.container {
+  margin: 10px;
+}
+
+/* Labels */
+label {
+  font-weight: bold;
+}
+
+/* Input fields */
+input {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+
+/* Button */
+button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Headings */
+h2 {
+  color: #0000ff;
+}
+
+h3 {
+  color: #0000ff;
+}
+
+/* Paragraphs */
+p {
+  color: #0000ff;
+}
+
+/* Form styles */
+form {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: 0 auto;
+
+  /* Form div styles */
+  div {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+
+    /* Label styles */
+    label {
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    /* Input styles */
+    input[type="number"],
+    input[type="text"],
+    input[type="date"] {
+      padding: 8px;
+      margin: 2px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  }
+
+  /* Submit button styles */
+  button[type="submit"] {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  button[type="submit"]:hover {
+    background: #0056b3;
+  }
+}
+.form-container {
+  background-color: #fff; /* Change to the background color you prefer */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+}
+/* Table styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Alternate row colors for better readability */
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hover effect on rows */
+tr:hover {
+  background-color: #f0f0f0;
+}
+
+/* Styling for the "Details" button */
+.btn-details {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-details:hover {
+  background-color: #0056b3;
+}

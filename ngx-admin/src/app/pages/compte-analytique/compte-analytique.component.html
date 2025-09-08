@@ -1,0 +1,65 @@
+<div class="container-xl">
+    <div class="table-responsive">
+      <div class="table-wrapper">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-5">
+              <h2>Gestion de <b>comptes analytiques</b></h2>
+            </div>
+            <div class="col-sm-7">
+              <div class="search-bar">
+                <input type="text" [(ngModel)]="search" (input)="searchfct()" class="form-control" placeholder="Rechercher ...">
+              </div>
+              <div class="action-buttons">
+                <button class="btn btn-secondary" (click)="onOpenDialogClick1()">
+                  <i class="material-icons">&#xE147;</i> <span>Ajouter un Budget révisé</span>
+                </button>
+  
+               
+  
+                <button class="btn btn-secondary" (click)="onOpenDialogClick()">
+                  <i class="material-icons">&#xE147;</i> <span>Affecter un budget révisé</span>
+                </button>
+
+ <button class="btn btn-secondary" (click)="exportAsXLSX()">
+                  <i class="material-icons">&#xE24D;</i> <span>Exporter vers Excel</span>
+                </button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Budget Initial</th>
+              <th>Budget Révisé</th>
+              <th>Entreprise</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let direction of listdirections">
+              <tr>
+                <td>{{ direction.id }}</td>
+                <td>{{ direction.name }}</td>
+                <td>{{ getBudgetInitialTaux(direction) }}</td>
+                <td>{{ getBudgetReviseTaux(direction) }}</td>
+                <td>{{ direction.entreprise?.name || '-' }}</td>
+                <td>
+                  <a class="affect-button" title="Affecter" data-toggle="tooltip" (click)="updateDirection(direction.id)">
+                    <i class="material-icons">check</i>
+                    Affecter
+                  </a>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

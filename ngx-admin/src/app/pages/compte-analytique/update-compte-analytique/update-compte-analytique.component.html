@@ -1,0 +1,26 @@
+<div class="form-container">
+<div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" [(ngModel)]="direction.name" name="name">
+</div>
+
+<div class="form-group">
+    <label for="budgetInitial">Budget Initial</label>
+    <select class="form-control" id="budgetInitial" [(ngModel)]="selectedBudgetInitialId" name="budgetInitial">
+        <option value="">-- Sélectionner un budget initial --</option>
+        <option *ngFor="let budgetInitial of budgetInitials" [value]="budgetInitial.id">{{ budgetInitial.name }}</option>
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="employe">Entreprise</label>
+    <select class="form-control" aria-label="Default select example" [(ngModel)]="selectedEntrepriseId">
+        <option *ngFor="let e of entreprises" [ngValue]="e.id">{{ e.name }}</option>
+    </select>
+</div>
+
+<div class="col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5">
+    <button (click)="affecterBudgetInitialADirection(selectedBudgetInitialId, direction.id)" type="button" class="btn btn-primary m-t-15 waves-effect">Affect Budget Initial</button>
+</div>
+
+</div>

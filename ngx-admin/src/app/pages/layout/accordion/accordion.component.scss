@@ -1,0 +1,47 @@
+
+/* Add this to your existing CSS or create a new styles file */
+
+/* Budget Form styles */
+.budget-form {
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 0 auto;
+
+  label {
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+
+  select,
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  button[type="submit"] {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  button[type="submit"]:hover {
+    background: #0056b3;
+  }
+}
+
+/* Validation Message styles */
+.validation-message {
+  color: #ff0000;
+  margin-top: 10px;
+  font-size: 14px;
+}

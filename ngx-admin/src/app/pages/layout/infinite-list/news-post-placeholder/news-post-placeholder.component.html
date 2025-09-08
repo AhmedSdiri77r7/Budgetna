@@ -1,0 +1,20 @@
+<div class="form-container">
+
+<div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" [(ngModel)]="budgetInitial.name" name="name">
+</div>
+<div class="form-group">
+    <label for="description">Observation</label>
+    <input type="text" class="form-control" id="description" [(ngModel)]="budgetInitial.description" name="description">
+</div>
+
+<div class="form-group">
+    <label for="tauxBudget">Montant</label>
+    <input type="number" class="form-control" id="tauxBudget" [(ngModel)]="budgetInitial.tauxBudget" name="tauxBudget">
+</div>
+<div class= "col-lg-offset-2 col-md-offset-2 col-sm-offset-4 col-xs-offset-5 " >
+    <button (click)= "updateBI()" type= "button " class= "btn btn-primary m-t-15 waves-effect " >Update </button >
+</div >
+
+</div>

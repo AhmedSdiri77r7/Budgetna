@@ -1,0 +1,35 @@
+<div class="lists row">
+  <div class="col-md-12">
+    <nb-card class="list-card">
+      <nb-card-header>
+        <h2>Liste des
+           Directions et Employe</h2>
+      </nb-card-header>
+      <nb-card-body>
+        <div *ngFor="let entreprise of groupedDirections | keyvalue">
+          <nb-card>
+            <nb-card-header>
+              <h3>{{ entreprise.key }}</h3>
+            </nb-card-header>
+            <nb-card-body>
+              <div *ngFor="let direction of entreprise.value">
+                <nb-card>
+                  <nb-card-header class="direction-title">
+                    <strong>Direction: </strong> {{ direction.name }}
+                  </nb-card-header>
+                  <nb-card-body>
+                    <nb-list>
+                      <nb-list-item *ngFor="let employe of getUsersByDirection(direction.id)">
+                        <nb-user [name]="employe.nom" [title]="employe.role"></nb-user>
+                      </nb-list-item>
+                    </nb-list>
+                  </nb-card-body>
+                </nb-card>
+              </div>
+            </nb-card-body>
+          </nb-card>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

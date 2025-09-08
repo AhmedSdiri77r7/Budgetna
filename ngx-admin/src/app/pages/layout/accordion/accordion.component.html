@@ -1,0 +1,27 @@
+<form [formGroup]="budgetForm" (ngSubmit)="onSubmit()" class="budget-form">
+  <label for="idBudgetInitial">sélectionner un Budget intial:</label>
+  <select id="idBudgetInitial" formControlName="idBudgetInitial">
+    <option *ngFor="let budget of budgetInitiaux" [value]="budget.id">{{ budget.name }}</option>
+  </select>
+  <br>
+  <label for="idEmploye">sélectionner un employe:</label>
+  <select id="selectedEmploye" formControlName="idEmploye">
+    <option *ngFor="let employe of listemploye " [value]="employe.id">{{ employe.nom }}</option>
+  </select>
+  <br>
+  <label for="libelle">libelle:</label>
+  <input type="text" id="libelle" formControlName="libelle">
+  <br>
+  <label for="dateDebut">Date Debut:</label>
+  <input type="date" id="dateDebut" formControlName="dateDebut">
+  <br>
+  <label for="dateFin">Date Fin:</label>
+  <input type="date" id="dateFin" formControlName="dateFin">
+ 
+  <button type="submit">Valider</button>
+</form>
+
+
+<div *ngIf="validationMessage" class="validation-message">
+  {{ validationMessage }}
+</div>

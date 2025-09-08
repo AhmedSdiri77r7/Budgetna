@@ -1,0 +1,69 @@
+<div class="container-xl">
+    <!-- Table for Budget Initial -->
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h2>Budget <b>Initial</b></h2>
+                    </div>
+                    <div class="col-sm-7">
+                        <a (click)="onOpenDialogClick1()" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Ajouter budget Initial</span></a>
+                        <a (click)="exportAsXLSX()" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <!-- Table headers for Budget Initial -->
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Observation</th>                        
+                        <th>Montant</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let budgetInitial of budgetInitials">
+                        <!-- Table data for Budget Initial -->
+                        <td>{{budgetInitial.id}}</td> 
+                        <td>{{budgetInitial.name}}</td> 
+                        <td>{{budgetInitial.description}}</td>     
+                        <td>{{budgetInitial.tauxBudget}}</td>
+                        <td>
+                            <a class="settings" title="Settings" data-toggle="tooltip" (click)="updateBudgetInitial(budgetInitial.id)"><i class="material-icons">&#xE8B8;</i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip" (click)="deleteBudI(budgetInitial.id)"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+  
+    <div class="container">
+        <h3>Reporting <b> Budget</b></h3>
+      
+        <div class="budget-list">
+          <div *ngFor="let budget of budgets">
+            <p>Budget ID: {{ budget.budgetInitial.id }}</p>
+            <p>Name: {{ budget.budgetInitial.name }}</p>
+            <p>Description: {{ budget.budgetInitial.description }}</p>
+            <p>Taux Budget: {{ budget.budgetInitial.tauxBudget }}</p>
+            <p>Employee ID: {{ budget.employe.id }}</p>
+            <p>Employee Name: {{ budget.employe.prenom }} {{ budget.employe.nom }}</p>
+            <p>Employee Email: {{ budget.employe.email }}</p>
+            <p>Valide: {{ budget.valide }}</p>
+            <!-- Display other properties of the budget as needed -->
+          </div>
+        </div>
+      
+        <h2>Select Employee</h2>
+        <select [(ngModel)]="selectedEmployeId" (change)="loadBudgets()">
+          <option *ngFor="let employee of employe" [value]="employee.id">{{ employee.nom }}</option>
+        </select>
+      
+      
+ 
+      </div>
+      

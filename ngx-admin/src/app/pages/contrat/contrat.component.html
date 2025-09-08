@@ -1,0 +1,48 @@
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <h2>Gestion <b>Contrat</b></h2>
+                    </div>
+                    <div class="col-sm-7">
+                        <a (click)="onOpenDialogClick()" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Ajouter un Contrat</span></a>
+                        <a (click)="exportAsXLSX()" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>						
+                    </div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Employe</th>
+                        <th>Date Debut</th>						
+                        <th>Type Contrat</th>
+                        <th>Salaire</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let contrat of listcontrats">
+                        
+                        <td>{{contrat.reference}}</td>       
+                        <td><a>{{contrat.employe.nom+" "+ contrat.employe.prenom}}</a></td>
+                        <td>{{contrat.dateDebut}}</td>
+                        <td>{{contrat.typeContrat}}</td>
+                        <td>{{contrat.salaire}}</td>
+                        
+                        <td>
+                            <a  class="settings" title="Settings" data-toggle="tooltip" (click)="updateContrat(contrat.reference)"><i class="material-icons">&#xE8B8;</i></a>
+                            <a  class="delete" title="Delete" data-toggle="tooltip" (click)="deleteContrat(contrat.reference)"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+  </div>     
+    
+  
