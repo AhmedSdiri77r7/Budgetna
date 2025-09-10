@@ -10,33 +10,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout le code
+      # 1️⃣ Checkout du repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Setup Java 17
+      # 2️⃣ Setup Java 17
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. Build le JAR avec Maven
-      - name: Build JAR
-        run: mvn clean package -DskipTests
+      # 3️⃣ Nettoyage du target pour éviter conflits avec anciens JAR
+      - name: Clean target directory
+        run: mvn clean
 
-      # 4. Upload le JAR comme artifact (optionnel)
+      # 4️⃣ Build Maven avec tests
+      - name: Build JAR with Maven
+        run: mvn package
+
+      # 5️⃣ Vérifier qu’un JAR a bien été généré
+      - name: List target directory
+        run: ls -l target/
+
+      # 6️⃣ Upload JAR en tant qu'artifact (optionnel, pour debug)
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v3
         with:
           name: BPDBackEnd-JAR
           path: target/*.jar
 
-      # 5. Deploy vers Azure Web App
+      # 7️⃣ Déploiement sur Azure Web App
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'budget-backend-ahmed'        # Nom de ton App Service
+          app-name: 'budget-backend-ahmed'              # Nom exact de ton App Service
           slot-name: 'production'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: target/*.jar
