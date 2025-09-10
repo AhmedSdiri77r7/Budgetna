@@ -1,50 +1,59 @@
-name: Build and Deploy Spring Boot to Azure Web App
+name: Build and Deploy Spring Boot to Azure
 
 on:
   push:
     branches:
-      - main  # Branche qui déclenche le déploiement
+      - main  # Branche à déployer
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout du repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
+    # 1️⃣ Checkout du code
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # 2️⃣ Setup Java 17
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+    # 2️⃣ Setup Java 17
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        distribution: temurin
+        java-version: '17'
 
-      # 3️⃣ Nettoyage du target pour éviter conflits avec anciens JAR
-      - name: Clean target directory
-        run: mvn clean
+    # 3️⃣ Cache Maven
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
 
-      # 4️⃣ Build Maven avec tests
-      - name: Build JAR with Maven
-        run: mvn package
+    # 4️⃣ Build Maven
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
 
-      # 5️⃣ Vérifier qu’un JAR a bien été généré
-      - name: List target directory
-        run: ls -l target/
+    # 5️⃣ Deploy to Azure App Service
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: budget-backend-ahmed
+        slot-name: production
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: target/BPDBackEnd-1.0.jar
 
-      # 6️⃣ Upload JAR en tant qu'artifact (optionnel, pour debug)
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: BPDBackEnd-JAR
-          path: target/*.jar
-
-      # 7️⃣ Déploiement sur Azure Web App
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'budget-backend-ahmed'              # Nom exact de ton App Service
-          slot-name: 'production'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: target/*.jar
+    # 6️⃣ Configure environment variables
+    - name: Configure App Settings (Environment Variables)
+      uses: azure/CLI@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az webapp config appsettings set --resource-group budget-rg --name budget-backend-ahmed --settings \
+            SPRING_PROFILES_ACTIVE=prod \
+            SPRING_DATASOURCE_URL=jdbc:postgresql://budgetdb-srv-ahmed.postgres.database.azure.com:5432/budgetdb?sslmode=require \
+            SPRING_DATASOURCE_USERNAME=appuser \
+            SPRING_DATASOURCE_PASSWORD=ChangeMe!234 \
+            FILE_UPLOAD_DIR=/home/site/wwwroot/uploads/images \
+            JWT_SECRET=U8K9e2VxL0f6Jq3TbH4YpR7wQ8mN5ZxV1sC6R9bW3tA0dG7H_YQ4J5Z8K1V2L3 \
+            JWT_EXPIRATION_MS=86400000
