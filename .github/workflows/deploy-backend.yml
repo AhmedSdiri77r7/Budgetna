@@ -56,7 +56,7 @@ jobs:
               --settings \
               SPRING_PROFILES_ACTIVE=prod \
               SPRING_DATASOURCE_URL="jdbc:postgresql://budgetdb-srv-ahmed.postgres.database.azure.com:5432/budgetdb?sslmode=require" \
-              SPRING_DATASOURCE_USERNAME=appuser \
+              SPRING_DATASOURCE_USERNAME="ahmed@budgetdb-srv-ahmed" \
             SPRING_DATASOURCE_PASSWORD=ChangeMe!234 \
             FILE_UPLOAD_DIR=/home/site/wwwroot/uploads/images \
             JWT_SECRET=U8K9e2VxL0f6Jq3TbH4YpR7wQ8mN5ZxV1sC6R9bW3tA0dG7H_YQ4J5Z8K1V2L3 \
