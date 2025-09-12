@@ -1,59 +1,70 @@
-name: Build and Deploy Spring Boot to Azure
+name: Build & Deploy Spring Boot to Azure
 
 on:
   push:
-    branches:
-      - main  # Branche à déployer
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout du code
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # 1) Checkout
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    # 2️⃣ Setup Java 17
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        distribution: temurin
-        java-version: '17'
+      # 2) Java 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
 
-    # 3️⃣ Cache Maven
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+      # 3) Cache Maven
+      - name: Cache Maven
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-    # 4️⃣ Build Maven
-    - name: Build with Maven
-      run: mvn clean package -DskipTests
+      # 4) Build (fat jar)
+      - name: Build with Maven
+        run: mvn -B clean package -DskipTests
 
-    # 5️⃣ Deploy to Azure App Service
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: budget-backend-ahmed
-        slot-name: production
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: target/BPDBackEnd-1.0.jar
+      # 5) Zip ONLY the jar(s) at the root of the zip
+      - name: Package ZIP
+        run: |
+          cd target
+          rm -f app.zip
+          zip app.zip *.jar
+          ls -l app.zip
+          cd -
 
-    # 6️⃣ Configure environment variables
-    - name: Configure App Settings (Environment Variables)
-      uses: azure/CLI@v1
-      with:
-        azcliversion: latest
-        inlineScript: |
-          az webapp config appsettings set --resource-group budget-rg --name budget-backend-ahmed --settings \
-            SPRING_PROFILES_ACTIVE=prod \
-            SPRING_DATASOURCE_URL=jdbc:postgresql://budgetdb-srv-ahmed.postgres.database.azure.com:5432/budgetdb?sslmode=require \
-            SPRING_DATASOURCE_USERNAME=appuser \
-            SPRING_DATASOURCE_PASSWORD=ChangeMe!234 \
-            FILE_UPLOAD_DIR=/home/site/wwwroot/uploads/images \
-            JWT_SECRET=U8K9e2VxL0f6Jq3TbH4YpR7wQ8mN5ZxV1sC6R9bW3tA0dG7H_YQ4J5Z8K1V2L3 \
-            JWT_EXPIRATION_MS=86400000
+      # 6) (Optional) Set/refresh App Settings using secrets
+      #    Comment out after first run if you manage settings in the Portal.
+      - name: Configure App Settings
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az webapp config appsettings set \
+              --resource-group budget-rg \
+              --name budget-backend-ahmed \
+              --settings \
+              SPRING_PROFILES_ACTIVE=prod \
+              SPRING_DATASOURCE_URL="jdbc:postgresql://budgetdb-srv-ahmed.postgres.database.azure.com:5432/budgetdb?sslmode=require" \
+              SPRING_DATASOURCE_USERNAME="ahmed@budgetdb-srv-ahmed" \
+              SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              JWT_EXPIRATION_MS=86400000
+
+      # 7) Deploy zip to App Service
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: budget-backend-ahmed
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: target/app.zip
