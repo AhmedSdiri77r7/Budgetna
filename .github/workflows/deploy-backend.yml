@@ -9,43 +9,41 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      PROJECT_DIR: budget-backend-ahmed  
+      PROJECT_DIR: budget-backend-ahmed   # folder that contains pom.xml
+
     steps:
-      # 1) Checkout
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2) Java 17
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      # 3) Cache Maven
       - name: Cache Maven
         uses: actions/cache@v4
         with:
           path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          key: ${{ runner.os }}-maven-${{ hashFiles(format('{0}/pom.xml', env.PROJECT_DIR)) }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # 4) Build (fat jar)
+      # ---- BUILD in the module folder ----
       - name: Build with Maven
+        working-directory: ${{ env.PROJECT_DIR }}
         run: mvn -B clean package -DskipTests
 
-      # 5) Zip ONLY the jar(s) at the root of the zip
+      # ---- ZIP the jar from that module's target/ so jar is at zip root ----
       - name: Package ZIP
+        working-directory: ${{ env.PROJECT_DIR }}/target
         run: |
-          cd target
           rm -f app.zip
           zip app.zip *.jar
           ls -l app.zip
-          cd -
 
-      # 6) (Optional) Set/refresh App Settings using secrets
-      #    Comment out after first run if you manage settings in the Portal.
+      # (Optional) If you DON'T manage app settings in Portal, keep this.
+      # Otherwise comment this whole step out.
       - name: Configure App Settings
         uses: azure/CLI@v1
         with:
@@ -58,15 +56,13 @@ jobs:
               SPRING_PROFILES_ACTIVE=prod \
               SPRING_DATASOURCE_URL="jdbc:postgresql://budgetdb-srv-ahmed.postgres.database.azure.com:5432/budgetdb?sslmode=require" \
               SPRING_DATASOURCE_USERNAME="ahmed@budgetdb-srv-ahmed" \
-            SPRING_DATASOURCE_PASSWORD=ChangeMe!234 \
-            FILE_UPLOAD_DIR=/home/site/wwwroot/uploads/images \
-            JWT_SECRET=U8K9e2VxL0f6Jq3TbH4YpR7wQ8mN5ZxV1sC6R9bW3tA0dG7H_YQ4J5Z8K1V2L3 \
-            JWT_EXPIRATION_MS=86400000
+              SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
+              JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+              JWT_EXPIRATION_MS=86400000
 
-      # 7) Deploy zip to App Service
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         with:
           app-name: budget-backend-ahmed
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: target/app.zip
+          package: ${{ env.PROJECT_DIR }}/target/app.zip
