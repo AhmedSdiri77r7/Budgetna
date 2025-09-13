@@ -60,7 +60,7 @@ jobs:
       #         --settings \
       #         SPRING_PROFILES_ACTIVE=prod \
       #         SPRING_DATASOURCE_URL="jdbc:postgresql://budgetdb-srv-ahmed.postgres.database.azure.com:5432/budgetdb?sslmode=require" \
-      #         SPRING_DATASOURCE_USERNAME="ahmed@budgetdb-srv-ahmed" \
+      #         SPRING_DATASOURCE_USERNAME="appuser" \
       #         SPRING_DATASOURCE_PASSWORD="${{ secrets.DB_PASSWORD }}" \
       #         FILE_UPLOAD_DIR=/home/site/wwwroot/uploads/images \
       #         JWT_SECRET="${{ secrets.JWT_SECRET }}" \
