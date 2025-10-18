@@ -1,0 +1,54 @@
+/* Style for form groups */
+.form-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Style for labels */
+  label {
+    font-weight: bold;
+  }
+  
+  /* Style for select elements */
+  .select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  /* Style for the button */
+  .btn-primary {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  /* Style for button on hover */
+  .btn-primary:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive offsets for the button */
+  .col-lg-offset-2, .col-md-offset-2, .col-sm-offset-4, .col-xs-offset-5 {
+    margin-left: 16.66666667%;
+  }
+  
+  /* Add some spacing to the top of the button */
+  .m-t-15 {
+    margin-top: 15px;
+  }
+  /* Style for the form container */
+.form-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Adjust the alpha (last) value to control transparency */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+  }
+  
+  /* Rest of the styles (from the previous CSS) remain the same */
+  

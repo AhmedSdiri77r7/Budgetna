@@ -1,0 +1,47 @@
+
+<div class="container-xl">
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <input type="text"  [(ngModel)]="search" (input)="searchfct()" class="form-control" placeholder="Search …">
+                    <div class="col-sm-5">
+                        <h2>Gestion <b>Direction</b></h2>
+                    </div>
+                    <div class="col-sm-7">
+                        <a (click)="onOpenDialogClick()" class="btn btn-secondary"><i class="material-icons">&#xE147;</i> <span>Ajouter une Direction</span></a>
+                        <a (click)="exportAsXLSX()" class="btn btn-secondary"><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a>						
+                    </div>
+                </div>
+            </div>
+            
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Entreprise</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let direction of listdirections ; let i = index">
+                        
+                        <td>{{direction.id}}</td>       
+                        <td>{{direction.name}}</td>
+                        <td>{{direction.entreprise.name}}</td>
+                        
+                        <td>
+                            <a  class="settings" title="Settings" data-toggle="tooltip" (click)="updateDirection(direction.id)"><i class="material-icons">&#xE8B8;</i></a>
+                            <a  class="delete" title="Delete" data-toggle="tooltip" (click)="deleteDirection(direction.id)"><i class="material-icons">&#xE5C9;</i></a>
+                        </td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+  </div>     
+    
+  

@@ -1,0 +1,64 @@
+<div class="container">
+    
+    <div class="title-container">
+        <div class="title">Register</div>
+    </div>
+    <form [formGroup]="signUp" (ngSubmit)="onSubmit()" class="login-form">
+        <div class="address-email">
+            <label>Nom</label>
+            <input type="text" formControlName="nom" placeholder="Nom" class="class-input">
+            <div *ngIf="fs.nom.invalid && (fs.nom.dirty || fs.nom.touched)">
+                <div class="text-danger" *ngIf="fs.fullName.errors?.required" >*Name is required please fill it</div>
+            </div>
+        </div>
+        <div class="address-email">
+            <label>Prenom</label>
+            <input type="text" formControlName="prenom" placeholder="Prenom" class="class-input">
+            <div *ngIf="fs.prenom.invalid && (fs.prenom.dirty || fs.prenom.touched)">
+                <div class="text-danger" *ngIf="fs.prenom.errors?.required" >*Prenom is required please fill it</div>
+            </div>
+        </div>
+        <div class="address-email">
+            <label>Email address :</label>
+            <input type="text" placeholder="Email address" formControlName="email" class="class-input">
+            <div *ngIf="fs.email.invalid && (fs.email.dirty || fs.email.touched)">
+                <div class="text-danger" *ngIf="fs.email.errors?.required" >*Email address is required please fill it</div>
+                <div class="text-danger" *ngIf="fs.email.errors?.email" >*Email address must have the form of an email exemple:"...@gmail.com"</div>
+                <div class="text-danger" *ngIf="fs.email.errors?.minlength" >*Email address is too short it can't be valid</div>
+            </div>
+        </div>
+        <div class="address-email">
+            <label>Password :</label>
+            <input type="password" formControlName="password" placeholder="Password" class="class-input">
+            <div *ngIf="fs.password.invalid && (fs.password.dirty || fs.password.touched)">
+                <div class="text-danger" *ngIf="fs.password.errors?.required" >*password is required please fill it</div>
+                <div class="text-danger" *ngIf="fs.password.errors?.minlength" >*password is too short it must be over 8 carachters</div>
+            </div>
+        </div>
+        <div class="address-email">
+            <label>Repeat password :</label>
+            <input type="password" formControlName="repeatPassword" placeholder="Repeat password" class="class-input">
+            <div *ngIf="fs.repeatPassword.invalid && (fs.repeatPassword.dirty || fs.repeatPassword.touched)">
+                <div class="text-danger" *ngIf="fs.repeatPassword.errors?.required" >*password is required please fill it</div>
+                <div class="text-danger" *ngIf="fs.repeatPassword.errors?.minlength" >*password is too short it must be over 8 carachters</div>
+            </div>
+        </div>
+        <div class="address-email">
+            <label>Role :</label>
+            <select formControlName="role" style="border-color: #8f9bb3;color: #8f9bb3; font-family: Open Sans, sans-serif;">
+                <option [ngValue]="null" disabled>Select Role</option>
+                <option *ngFor="let role of Roles" [ngValue]="role.name">{{role.name}}</option>
+              </select>
+        </div>
+        
+        <button type="submit" class="button-login"> REGISTER </button>
+    </form>
+    <div class="social-media-container">
+        <span></span>
+        <div class="social-media">
+
+        </div>
+    </div>
+    <div class="register-account">Already have an account?<a routerLink="/auth/login">Log in</a></div>
+
+</div>

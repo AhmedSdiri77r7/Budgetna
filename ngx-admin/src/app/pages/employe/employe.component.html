@@ -1,0 +1,58 @@
+<div class="container-xl">
+    <div class="table-responsive">
+      <div class="table-wrapper">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-5">
+              <h2>Gestion <b>Employe</b></h2>
+            </div>
+            <div class="col-sm-7">
+              <!-- Add employee button -->
+              <a (click)="onOpenDialogClick()" class="btn btn-secondary">
+                <i class="material-icons">&#xE147;</i>
+                <span>Ajouter un Employe</span>
+              </a>
+              <!-- Export to Excel button -->
+              <a (click)="exportAsXLSX()" class="btn btn-secondary">
+                <i class="material-icons">&#xE24D;</i>
+                <span>Export to Excel</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom Prenom</th>
+              <th>Role</th>
+              <th>E-mail</th>
+            
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Loop over the employee list -->
+            <tr *ngFor="let employe of listemploye">
+              <td>{{ employe.id }}</td>
+              <td><a>{{ employe.nom + " " + employe.prenom }}</a></td>
+              <td>{{ employe.role }}</td>
+              <td>{{ employe.email }}</td>
+          
+              <td>
+                <!-- Update employee button -->
+                <a class="affecter" title="Affecter" data-toggle="tooltip" (click)="updateEmploye(employe.id)">
+                  <i class="material-icons">&#xE8B8;</i>
+                </a>
+                <!-- Delete employee button -->
+                <a class="delete" title="Delete" data-toggle="tooltip" (click)="deleteEmploye(employe.id)">
+                  <i class="material-icons">&#xE5C9;</i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

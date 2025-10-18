@@ -1,0 +1,47 @@
+<!-- Second Step -->
+<form [formGroup]="secondForm">
+  <!-- Step 2 content -->
+  <mat-step [stepControl]="secondForm" class="custom-step">
+    <!-- Use the custom-step class defined in SCSS -->
+    <ng-template matStepLabel>Step 2</ng-template>
+    <div class="form-group">
+      <!-- Use the form-group class defined in SCSS -->
+      <label for="secondCtrl">Email</label>
+      <input type="email" formControlName="secondCtrl" id="secondCtrl" placeholder="Enter email" class="form-control">
+      <!-- Add form-control class for input field -->
+    </div>
+    <div>
+  
+      <!-- Add custom-button class for Back button -->
+      <button mat-button (click)="onSecondSubmit()" class="custom-button">Next</button>
+      <!-- Add custom-button class for Next button -->
+    </div>
+  </mat-step>
+</form>
+
+<!-- Third Step -->
+<form [formGroup]="thirdForm">
+  <!-- Step 3 content -->
+  <mat-step [stepControl]="thirdForm" class="custom-step">
+    <!-- Use the custom-step class defined in SCSS -->
+    <ng-template matStepLabel>Step 3</ng-template>
+    <div class="form-group">
+      <!-- Use the form-group class defined in SCSS -->
+      <label for="thirdCtrl">Employee Information</label>
+      <div class="form-control" id="thirdCtrl">
+        <!-- Display employee information using interpolation -->
+        
+        <p>Email: {{ email }}</p>
+        <p>Name: {{ employe?.nom }}</p>
+        <p>Surname: {{ employe?.prenom }}</p>
+        <p>Role: {{ employe?.role }}</p>
+        <div>
+          <!-- Add other employee properties as needed -->
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <!-- Add other form controls for step 3 as needed -->
+    </div>
+  </mat-step>
+</form>

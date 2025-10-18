@@ -1,0 +1,34 @@
+<div class="container">
+    
+    <div class="title-container">
+        <div class="title">Login</div>
+        <div class="sub-title">Hello! Log in with your email</div>
+    </div>
+    <form [formGroup]="logIn" class="login-form" (ngSubmit)="submit()">
+        <div class="address-email">
+            <label>Email address :</label>
+            <input type="text" placeholder="Email address" formControlName="email" class="class-input">
+            <div *ngIf="f.email.invalid && (f.email.dirty || f.email.touched)">
+                <div class="text-danger" *ngIf="f.email.errors?.required" >*Email address is required please fill it</div>
+                <div class="text-danger" *ngIf="f.email.errors?.email" >*Email address must have the form of an email exemple:"...@gmail.com"</div>
+                <div class="text-danger" *ngIf="f.email.errors?.minlength" >*Email address is too short it can't be valid</div>
+            </div>
+        </div>
+        <div class="password">
+            <label>Password :</label>
+            <input type="password" placeholder="Password" formControlName="password" class="class-input" >
+            <div *ngIf="f.password.invalid && (f.password.dirty || f.password.touched)">
+                <div class="text-danger" *ngIf="f.password.errors?.required" >*password is required please fill it</div>
+            </div>
+        </div>
+        <button type="submit" class="button-login"> LOG IN </button>
+    </form>
+    <div class="social-media-container">
+        <span></span>
+        <div class="social-media">
+
+        </div>
+    </div>
+    <div class="register-account">Don't have an account?<a routerLink="/auth/signup">Resgiter</a></div>
+
+</div>

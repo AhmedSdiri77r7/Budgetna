@@ -1,0 +1,26 @@
+<div class="lists row">
+  <div class="col-md-12 col-lg-6 col-xxxl-6">
+    <nb-card class="list-card">
+      <nb-card-header>Direction</nb-card-header>
+      <nb-card-body>
+        <nb-list>
+          <nb-list-item *ngFor="let direction of listdirections">
+            <a style="cursor: pointer;" (click)="directionSelection(direction)">{{ direction.name }}</a>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <div class="col-md-12 col-lg-6 col-xxxl-6">
+    <nb-card class="list-card" size="small">
+      <nb-card-header class="direction">Users <span> {{ selectedDirection.name }} </span></nb-card-header>
+      <nb-list>
+        <nb-list-item *ngFor="let employe of listemploye">
+          <nb-user [name]="employe.nom" [title]="employe.role">
+          </nb-user>
+        </nb-list-item>
+      </nb-list>
+    </nb-card>
+  </div>
+</div>
