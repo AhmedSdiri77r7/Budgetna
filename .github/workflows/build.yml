@@ -56,7 +56,7 @@ jobs:
 
       - name: 🛠️ Build Angular
         working-directory: ./ngx-admin
-        run: npm run build:prod
+        run: npx ng build --configuration production --aot
 
       - name: 📤 Upload frontend artifact
         if: github.ref == 'refs/heads/main'
