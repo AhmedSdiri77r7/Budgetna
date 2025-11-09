@@ -7,15 +7,7 @@ import { MiscellaneousComponent } from './miscellaneous.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 
 @NgModule({
-  imports: [
-    ThemeModule,
-    NbCardModule,
-    NbButtonModule,
-    MiscellaneousRoutingModule,
-  ],
-  declarations: [
-    MiscellaneousComponent,
-    NotFoundComponent,
-  ],
+  imports: [ThemeModule, NbCardModule, NbButtonModule, MiscellaneousRoutingModule],
+  declarations: [MiscellaneousComponent, NotFoundComponent],
 })
-export class MiscellaneousModule { }
+export class MiscellaneousModule {}

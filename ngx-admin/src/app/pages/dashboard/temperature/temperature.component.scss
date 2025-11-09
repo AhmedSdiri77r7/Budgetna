@@ -3,7 +3,6 @@
 @import '~@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
-
   nb-tabset {
     display: flex;
     flex-direction: column;

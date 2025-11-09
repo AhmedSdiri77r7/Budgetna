@@ -8,12 +8,9 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 @Component({
   selector: 'ngx-profit-chart',
   styleUrls: ['./charts-common.component.scss'],
-  template: `
-    <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div>
-  `,
+  template: ` <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div> `,
 })
 export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges {
-
   @Input()
   profitChartData: ProfitChart;
 
@@ -22,12 +19,13 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
   echartsIntance: any;
   options: any = {};
 
-  constructor(private theme: NbThemeService,
-              private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
-      .pipe(
-        takeWhile(() => this.alive),
-      )
+  constructor(
+    private theme: NbThemeService,
+    private layoutService: LayoutService,
+  ) {
+    this.layoutService
+      .onSafeChangeLayoutSize()
+      .pipe(takeWhile(() => this.alive))
       .subscribe(() => this.resizeChart());
   }
 
@@ -38,7 +36,8 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
   }
 
   ngAfterViewInit() {
-    this.theme.getJsTheme()
+    this.theme
+      .getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(config => {
         const eTheme: any = config.variables.profit;
@@ -110,13 +109,16 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
           barWidth: '20%',
           itemStyle: {
             normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: eTheme.firstLineGradFrom,
-              }, {
-                offset: 1,
-                color: eTheme.firstLineGradTo,
-              }]),
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: eTheme.firstLineGradFrom,
+                },
+                {
+                  offset: 1,
+                  color: eTheme.firstLineGradTo,
+                },
+              ]),
             },
           },
           data: this.profitChartData.data[0],
@@ -127,13 +129,16 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
           barWidth: '20%',
           itemStyle: {
             normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: eTheme.secondLineGradFrom,
-              }, {
-                offset: 1,
-                color: eTheme.secondLineGradTo,
-              }]),
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: eTheme.secondLineGradFrom,
+                },
+                {
+                  offset: 1,
+                  color: eTheme.secondLineGradTo,
+                },
+              ]),
             },
           },
           data: this.profitChartData.data[1],
@@ -144,13 +149,16 @@ export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges
           barWidth: '20%',
           itemStyle: {
             normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: eTheme.thirdLineGradFrom,
-              }, {
-                offset: 1,
-                color: eTheme.thirdLineGradTo,
-              }]),
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: eTheme.thirdLineGradFrom,
+                },
+                {
+                  offset: 1,
+                  color: eTheme.thirdLineGradTo,
+                },
+              ]),
             },
           },
           data: this.profitChartData.data[2],

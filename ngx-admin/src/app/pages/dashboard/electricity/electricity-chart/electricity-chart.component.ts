@@ -8,16 +8,10 @@ import { ElectricityChart } from '../../../../@core/data/electricity';
   selector: 'ngx-electricity-chart',
   styleUrls: ['./electricity-chart.component.scss'],
   template: `
-    <div echarts
-         [options]="option"
-         [merge]="option"
-         class="echart"
-         (chartInit)="onChartInit($event)">
-    </div>
+    <div echarts [options]="option" [merge]="option" class="echart" (chartInit)="onChartInit($event)"></div>
   `,
 })
 export class ElectricityChartComponent implements AfterViewInit, OnDestroy {
-
   private alive = true;
 
   @Input() data: ElectricityChart[];
@@ -25,17 +19,19 @@ export class ElectricityChartComponent implements AfterViewInit, OnDestroy {
   option: any;
   echartsIntance: any;
 
-  constructor(private theme: NbThemeService,
-              private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
-      .pipe(
-        takeWhile(() => this.alive),
-      )
+  constructor(
+    private theme: NbThemeService,
+    private layoutService: LayoutService,
+  ) {
+    this.layoutService
+      .onSafeChangeLayoutSize()
+      .pipe(takeWhile(() => this.alive))
       .subscribe(() => this.resizeChart());
   }
 
   ngAfterViewInit(): void {
-    this.theme.getJsTheme()
+    this.theme
+      .getJsTheme()
       .pipe(
         takeWhile(() => this.alive),
         delay(1),
@@ -129,13 +125,16 @@ export class ElectricityChartComponent implements AfterViewInit, OnDestroy {
                 normal: {
                   width: eTheme.lineWidth,
                   type: eTheme.lineStyle,
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: eTheme.lineGradFrom,
-                  }, {
-                    offset: 1,
-                    color: eTheme.lineGradTo,
-                  }]),
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: eTheme.lineGradFrom,
+                    },
+                    {
+                      offset: 1,
+                      color: eTheme.lineGradTo,
+                    },
+                  ]),
                   shadowColor: eTheme.lineShadow,
                   shadowBlur: 6,
                   shadowOffsetY: 12,
@@ -143,13 +142,16 @@ export class ElectricityChartComponent implements AfterViewInit, OnDestroy {
               },
               areaStyle: {
                 normal: {
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: eTheme.areaGradFrom,
-                  }, {
-                    offset: 1,
-                    color: eTheme.areaGradTo,
-                  }]),
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: eTheme.areaGradFrom,
+                    },
+                    {
+                      offset: 1,
+                      color: eTheme.areaGradTo,
+                    },
+                  ]),
                 },
               },
               data: this.data.map(i => i.value),
@@ -163,13 +165,16 @@ export class ElectricityChartComponent implements AfterViewInit, OnDestroy {
                 normal: {
                   width: eTheme.lineWidth,
                   type: eTheme.lineStyle,
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: eTheme.lineGradFrom,
-                  }, {
-                    offset: 1,
-                    color: eTheme.lineGradTo,
-                  }]),
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    {
+                      offset: 0,
+                      color: eTheme.lineGradFrom,
+                    },
+                    {
+                      offset: 1,
+                      color: eTheme.lineGradTo,
+                    },
+                  ]),
                   shadowColor: eTheme.shadowLineDarkBg,
                   shadowBlur: 14,
                   opacity: 1,
@@ -179,7 +184,7 @@ export class ElectricityChartComponent implements AfterViewInit, OnDestroy {
             },
           ],
         };
-    });
+      });
   }
 
   onChartInit(echarts) {

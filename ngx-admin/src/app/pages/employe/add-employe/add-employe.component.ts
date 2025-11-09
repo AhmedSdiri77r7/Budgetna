@@ -9,23 +9,27 @@ import { DirectionService } from '../../../services/direction.service';
 @Component({
   selector: 'ngx-add-employe',
   templateUrl: './add-employe.component.html',
-  styleUrls: ['./add-employe.component.scss']
+  styleUrls: ['./add-employe.component.scss'],
 })
 export class AddEmployeComponent implements OnInit {
-  employe:Employe=new Employe();
-  selectedDirectionId:number;
-  directions:Direction[];
-  constructor(private _router:Router,private dialogRef:MatDialogRef<AddEmployeComponent>,private serviceDirection:DirectionService,private serviceEmploye:EmployeService) { }
+  employe: Employe = new Employe();
+  selectedDirectionId: number;
+  directions: Direction[];
+  constructor(
+    private _router: Router,
+    private dialogRef: MatDialogRef<AddEmployeComponent>,
+    private serviceDirection: DirectionService,
+    private serviceEmploye: EmployeService,
+  ) {}
 
   ngOnInit(): void {
-    this.serviceDirection.getDirections().subscribe((data)=>this.directions=data);
+    this.serviceDirection.getDirections().subscribe(data => (this.directions = data));
   }
-  addEmploye(){
-    
-    this.serviceEmploye.addEmploye1(this.employe).subscribe(()=>{
+  addEmploye() {
+    this.serviceEmploye.addEmploye1(this.employe).subscribe(() => {
       this.dialogRef.close();
-      this._router.navigateByUrl("/pages/employe").then(()=>window.location.reload());
+      this._router.navigateByUrl('/pages/employe').then(() => window.location.reload());
       console.log(this.employe);
-    })
+    });
   }
 }

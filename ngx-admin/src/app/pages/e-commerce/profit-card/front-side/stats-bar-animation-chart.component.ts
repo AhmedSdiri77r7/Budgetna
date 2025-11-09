@@ -5,16 +5,9 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 
 @Component({
   selector: 'ngx-stats-bar-animation-chart',
-  template: `
-    <div echarts
-         [options]="options"
-         class="echart"
-         (chartInit)="onChartInit($event)">
-    </div>
-  `,
+  template: ` <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div> `,
 })
 export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy {
-
   private alive = true;
 
   @Input() linesData: { firstLine: number[]; secondLine: number[] } = {
@@ -25,31 +18,30 @@ export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy
   echartsIntance: any;
   options: any = {};
 
-  constructor(private theme: NbThemeService,
-              private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
-      .pipe(
-        takeWhile(() => this.alive),
-      )
+  constructor(
+    private theme: NbThemeService,
+    private layoutService: LayoutService,
+  ) {
+    this.layoutService
+      .onSafeChangeLayoutSize()
+      .pipe(takeWhile(() => this.alive))
       .subscribe(() => this.resizeChart());
   }
 
   ngAfterViewInit() {
-    this.theme.getJsTheme()
+    this.theme
+      .getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(config => {
         const profitBarAnimationEchart: any = config.variables.profitBarAnimationEchart;
 
         this.setChartOption(profitBarAnimationEchart);
-    });
+      });
   }
 
   setChartOption(chartVariables) {
     this.options = {
-      color: [
-        chartVariables.firstAnimationBarColor,
-        chartVariables.secondAnimationBarColor,
-      ],
+      color: [chartVariables.firstAnimationBarColor, chartVariables.secondAnimationBarColor],
       grid: {
         left: 0,
         top: 0,

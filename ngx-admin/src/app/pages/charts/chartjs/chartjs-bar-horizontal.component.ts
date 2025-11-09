@@ -3,31 +3,30 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-chartjs-bar-horizontal',
-  template: `
-    <chart type="horizontalBar" [data]="budgetInitial" [options]="tauxBudget"></chart>
-  `,
+  template: ` <chart type="horizontalBar" [data]="budgetInitial" [options]="tauxBudget"></chart> `,
 })
 export class ChartjsBarHorizontalComponent implements OnDestroy {
   data: any;
   options: any;
   themeSubscription: any;
   budgetInitial: any;
-  tauxBudget:any;
+  tauxBudget: any;
 
   constructor(private theme: NbThemeService) {
     this.themeSubscription = this.theme.getJsTheme().subscribe(config => {
-
       const colors: any = config.variables;
       const chartjs: any = config.variables.chartjs;
 
       this.data = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        datasets: [{
+        datasets: [
+          {
             label: 'Dataset 1',
             backgroundColor: colors.infoLight,
             borderWidth: 1,
             data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
-          }, {
+          },
+          {
             label: 'Dataset 2',
             backgroundColor: colors.successLight,
             data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],

@@ -27,15 +27,9 @@ export class ToastrComponent {
   status: NbComponentStatus = 'primary';
 
   title = 'HI there!';
-  content = `I'm cool toaster!`;
+  content = "I'm cool toaster!";
 
-  types: NbComponentStatus[] = [
-    'primary',
-    'success',
-    'info',
-    'warning',
-    'danger',
-  ];
+  types: NbComponentStatus[] = ['primary', 'success', 'info', 'warning', 'danger'];
   positions: string[] = [
     NbGlobalPhysicalPosition.TOP_RIGHT,
     NbGlobalPhysicalPosition.TOP_LEFT,
@@ -57,7 +51,7 @@ export class ToastrComponent {
     this.showToast(this.status, this.title, this.content);
   }
 
-  openRandomToast () {
+  openRandomToast() {
     const typeIndex = Math.floor(Math.random() * this.types.length);
     const quoteIndex = Math.floor(Math.random() * this.quotes.length);
     const type = this.types[typeIndex];
@@ -78,9 +72,6 @@ export class ToastrComponent {
     const titleContent = title ? `. ${title}` : '';
 
     this.index += 1;
-    this.toastrService.show(
-      body,
-      `Toast ${this.index}${titleContent}`,
-      config);
+    this.toastrService.show(body, `Toast ${this.index}${titleContent}`, config);
   }
 }

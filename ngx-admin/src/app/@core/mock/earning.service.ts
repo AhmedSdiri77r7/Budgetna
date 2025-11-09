@@ -4,7 +4,6 @@ import { LiveUpdateChart, PieChart, EarningData } from '../data/earning';
 
 @Injectable()
 export class EarningService extends EarningData {
-
   private currentDate: Date = new Date();
   private currentValue = Math.random() * 1000;
   private ONE_DAY = 24 * 3600 * 1000;
@@ -55,8 +54,7 @@ export class EarningService extends EarningData {
     this.currentDate = new Date();
     this.currentValue = Math.random() * 1000;
 
-    return Array.from(Array(elementsNumber))
-      .map(item => this.generateRandomLiveChartData());
+    return Array.from(Array(elementsNumber)).map(item => this.generateRandomLiveChartData());
   }
 
   generateRandomLiveChartData() {
@@ -69,11 +67,7 @@ export class EarningService extends EarningData {
 
     return {
       value: [
-        [
-          this.currentDate.getFullYear(),
-          this.currentDate.getMonth(),
-          this.currentDate.getDate(),
-        ].join('/'),
+        [this.currentDate.getFullYear(), this.currentDate.getMonth(), this.currentDate.getDate()].join('/'),
         Math.round(this.currentValue),
       ],
     };

@@ -30,11 +30,11 @@ export class InfiniteListComponent implements OnInit {
     private budgetService: BudgetService,
     private matDialog: MatDialog,
     private excelService: ExcelService,
-    private employeService: EmployeService
+    private employeService: EmployeService,
   ) {}
 
   ngOnInit(): void {
-    this.budgetService.getBudgetInitial().subscribe((data) => {
+    this.budgetService.getBudgetInitial().subscribe(data => {
       console.log(data);
       console.log();
       this.budgetInitials = data;
@@ -51,50 +51,51 @@ export class InfiniteListComponent implements OnInit {
 
   getUsers(): void {
     this.employeService.getEmployes().subscribe(
-      (data) => {
+      data => {
         this.employe = data;
         console.log(data);
       },
-      (err) => {
+      err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
-      }
+      },
     );
   }
 
   loadBudgets(): void {
     if (this.selectedEmployeId) {
-      this.budgetService
-        .findAllBudgetByEmployeJPQL(this.selectedEmployeId)
-        .subscribe(
-          (response) => {
-            this.budgets = response.body;
-          },
-          (error) => {
-            console.error('Error fetching budgets:', error);
-          }
-        );
+      this.budgetService.findAllBudgetByEmployeJPQL(this.selectedEmployeId).subscribe(
+        response => {
+          this.budgets = response;
+        },
+        error => {
+          console.error('Error fetching budgets:', error);
+        },
+      );
     } else {
       this.budgets = [];
     }
   }
 
   deleteBudI(id: number): void {
-    this.budgetService.deleteBudgetInitial(id).subscribe(() => {
-      this.budgetService.getBudgetInitial().subscribe(
-        (data) => {
-          this.budgetInitials = data;
-          console.log(data);
-        },
-        (err) => {
-          this._router.navigateByUrl('/auth');
-          this.tokenStorage.signOut();
-        }
-      );
-    }, (err) => {
-      this._router.navigateByUrl('/auth');
-      this.tokenStorage.signOut();
-    });
+    this.budgetService.deleteBudgetInitial(id).subscribe(
+      () => {
+        this.budgetService.getBudgetInitial().subscribe(
+          data => {
+            this.budgetInitials = data;
+            console.log(data);
+          },
+          err => {
+            this._router.navigateByUrl('/auth');
+            this.tokenStorage.signOut();
+          },
+        );
+      },
+      err => {
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
+    );
   }
 
   updateBudgetInitial(idBudgetInitial: number) {

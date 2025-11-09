@@ -3,7 +3,6 @@
 @import '~@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
-
   .cards-container {
     display: flex;
     flex-direction: row;

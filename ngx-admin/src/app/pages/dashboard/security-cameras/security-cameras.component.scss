@@ -3,7 +3,6 @@
 @import '~bootstrap/scss/mixins/breakpoints';
 
 @include nb-install-component() {
-
   nb-card-header {
     display: flex;
     align-items: center;

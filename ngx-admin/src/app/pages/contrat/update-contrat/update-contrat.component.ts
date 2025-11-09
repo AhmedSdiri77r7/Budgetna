@@ -12,23 +12,32 @@ import { TokenStorageService } from '../../../services/token-storage.service';
 @Component({
   selector: 'ngx-update-contrat',
   templateUrl: './update-contrat.component.html',
-  styleUrls: ['./update-contrat.component.scss']
+  styleUrls: ['./update-contrat.component.scss'],
 })
 export class UpdateContratComponent implements OnInit {
-  selectedEmployeId:number;
-  employees:Employe[];
-  contrat:Contrat=new Contrat();
-  constructor(private tokenStorage:TokenStorageService,private employeService:EmployeService,private contratService:ContratService,private _router:Router,private dialogRef:MatDialogRef<UpdateContratComponent>) { }
+  selectedEmployeId: number;
+  employees: Employe[];
+  contrat: Contrat = new Contrat();
+  constructor(
+    private tokenStorage: TokenStorageService,
+    private employeService: EmployeService,
+    private contratService: ContratService,
+    private _router: Router,
+    private dialogRef: MatDialogRef<UpdateContratComponent>,
+  ) {}
 
   ngOnInit(): void {
-    this.contratService.$eventEmit.subscribe((data)=> {
-      this.contrat=data;
-      this.selectedEmployeId=data.employe.id;
-      console.log(this.contrat);
-    },err => {
-      this._router.navigateByUrl("/auth");
-      this.tokenStorage.signOut();
-    })
+    this.contratService.$eventEmit.subscribe(
+      data => {
+        this.contrat = data;
+        this.selectedEmployeId = data.employe.id;
+        console.log(this.contrat);
+      },
+      err => {
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
+    );
     this.getEmployees();
   }
   public getEmployees(): void {
@@ -39,21 +48,23 @@ export class UpdateContratComponent implements OnInit {
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
-          this._router.navigateByUrl("/auth");
-          this.tokenStorage.signOut();
-      }
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
     );
   }
-  addContrat(){
-    this.contratService.addContrat(this.contrat,this.selectedEmployeId).subscribe(()=>{
-      this.dialogRef.close();
-      this._router.navigateByUrl('/pages/contrat', { skipLocationChange: true }).then(() => {
-        this._router.navigate(['/pages/contrat']);
-      }); 
-    },err => {
-      this._router.navigateByUrl("/auth");
-      this.tokenStorage.signOut();
-    })
+  addContrat() {
+    this.contratService.addContrat(this.contrat, this.selectedEmployeId).subscribe(
+      () => {
+        this.dialogRef.close();
+        this._router.navigateByUrl('/pages/contrat', { skipLocationChange: true }).then(() => {
+          this._router.navigate(['/pages/contrat']);
+        });
+      },
+      err => {
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
+    );
   }
-
 }

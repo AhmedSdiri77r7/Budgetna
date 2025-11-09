@@ -1,5 +1,4 @@
-import { Direction } from "./direction";
-
+import { Direction } from './direction';
 
 export class BudgetInitial {
   id: number;

@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CryptoService {
-
   encrypt(plaintext: string, key: string): string {
     return CryptoJS.AES.encrypt(plaintext, key).toString();
   }

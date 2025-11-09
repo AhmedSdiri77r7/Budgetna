@@ -1,7 +1,7 @@
 import { NbMenuItem } from '@nebular/theme';
 
 export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
- /* {
+  /* {
     title: 'E-commerce',
     icon: 'shopping-cart-outline',
     link: '/pages/dashboard',
@@ -175,7 +175,7 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
       },
     ],
   },
-  
+
   {
     title: 'Statistique',
     icon: 'pie-chart-outline',
@@ -193,7 +193,7 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
         link: '/pages/charts/d3',
       },
     ],
-  },  
+  },
   {
     title: 'Editors',
     icon: 'text-outline',
@@ -208,7 +208,7 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
       },
     ],
   },*/
- /* {
+  /* {
     title: 'Gestion Compte Analytique',
     icon: 'grid-outline',
     children: [
@@ -222,7 +222,7 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
       },
     ],
   },*/
- /* {
+  /* {
     title: 'Miscellaneous',
     icon: 'shuffle-2-outline',
     children: [
@@ -233,5 +233,4 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
     ],
   },
 */
-  
 ];

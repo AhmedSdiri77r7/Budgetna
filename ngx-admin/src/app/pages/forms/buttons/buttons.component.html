@@ -7,9 +7,7 @@
           <button *ngFor="let status of statuses" nbButton [status]="status" hero>
             {{ status }}
           </button>
-          <button disabled nbButton hero>
-            disabled
-          </button>
+          <button disabled nbButton hero>disabled</button>
         </div>
       </nb-card-body>
     </nb-card>
@@ -21,9 +19,7 @@
           <button *ngFor="let status of statuses" nbButton [status]="status">
             {{ status }}
           </button>
-          <button disabled nbButton>
-            disabled
-          </button>
+          <button disabled nbButton>disabled</button>
         </div>
       </nb-card-body>
     </nb-card>
@@ -35,9 +31,7 @@
           <button *ngFor="let status of statuses" nbButton [status]="status" outline>
             {{ status }}
           </button>
-          <button disabled nbButton outline>
-            disabled
-          </button>
+          <button disabled nbButton outline>disabled</button>
         </div>
       </nb-card-body>
     </nb-card>
@@ -49,9 +43,7 @@
           <button *ngFor="let status of statuses" nbButton [status]="status" ghost>
             {{ status }}
           </button>
-          <button disabled nbButton outline>
-            disabled
-          </button>
+          <button disabled nbButton outline>disabled</button>
         </div>
       </nb-card-body>
     </nb-card>
@@ -89,9 +81,10 @@
           <nb-action icon="menu-outline"></nb-action>
           <nb-action icon="search-outline"></nb-action>
           <nb-action icon="email-outline"></nb-action>
-          <nb-action disabled icon="bell-outline"></nb-action><nb-action>
-          <nb-user name="Han Solo"></nb-user>
-        </nb-action>
+          <nb-action disabled icon="bell-outline"></nb-action
+          ><nb-action>
+            <nb-user name="Han Solo"></nb-user>
+          </nb-action>
           <nb-action icon="settings-2-outline"></nb-action>
         </nb-actions>
       </nb-card-body>

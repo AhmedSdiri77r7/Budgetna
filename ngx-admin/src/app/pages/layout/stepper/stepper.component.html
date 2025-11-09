@@ -7,11 +7,10 @@
     <div class="form-group">
       <!-- Use the form-group class defined in SCSS -->
       <label for="secondCtrl">Email</label>
-      <input type="email" formControlName="secondCtrl" id="secondCtrl" placeholder="Enter email" class="form-control">
+      <input type="email" formControlName="secondCtrl" id="secondCtrl" placeholder="Enter email" class="form-control" />
       <!-- Add form-control class for input field -->
     </div>
     <div>
-  
       <!-- Add custom-button class for Back button -->
       <button mat-button (click)="onSecondSubmit()" class="custom-button">Next</button>
       <!-- Add custom-button class for Next button -->
@@ -30,11 +29,21 @@
       <label for="thirdCtrl">Employee Information</label>
       <div class="form-control" id="thirdCtrl">
         <!-- Display employee information using interpolation -->
-        
-        <p>Email: {{ email }}</p>
-        <p>Name: {{ employe?.nom }}</p>
-        <p>Surname: {{ employe?.prenom }}</p>
-        <p>Role: {{ employe?.role }}</p>
+        <div class="employee-profile d-flex align-items-center">
+          <img
+            *ngIf="employe"
+            [src]="employe._imageUrl || 'assets/default-avatar.png'"
+            alt="Avatar"
+            class="employee-avatar mr-3"
+            style="width: 96px; height: 96px; object-fit: cover; border-radius: 50%"
+          />
+          <div>
+            <p class="mb-1"><strong>Email:</strong> {{ email }}</p>
+            <p class="mb-1"><strong>Name:</strong> {{ employe?.nom }}</p>
+            <p class="mb-1"><strong>Surname:</strong> {{ employe?.prenom }}</p>
+            <p class="mb-0"><strong>Role:</strong> {{ employe?.role }}</p>
+          </div>
+        </div>
         <div>
           <!-- Add other employee properties as needed -->
         </div>

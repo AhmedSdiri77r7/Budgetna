@@ -4,7 +4,6 @@ import { NbThemeService } from '@nebular/theme';
 import { OutlineData, VisitorsAnalyticsData } from '../../../@core/data/visitors-analytics';
 import { forkJoin } from 'rxjs';
 
-
 @Component({
   selector: 'ngx-ecommerce-visitors-analytics',
   styleUrls: ['./visitors-analytics.component.scss'],
@@ -14,12 +13,15 @@ export class ECommerceVisitorsAnalyticsComponent implements OnDestroy {
   private alive = true;
 
   pieChartValue: number;
-  chartLegend: {iconColor: string; title: string}[];
-  visitorsAnalyticsData: { innerLine: number[]; outerLine: OutlineData[]; };
+  chartLegend: { iconColor: string; title: string }[];
+  visitorsAnalyticsData: { innerLine: number[]; outerLine: OutlineData[] };
 
-  constructor(private themeService: NbThemeService,
-              private visitorsAnalyticsChartService: VisitorsAnalyticsData) {
-    this.themeService.getJsTheme()
+  constructor(
+    private themeService: NbThemeService,
+    private visitorsAnalyticsChartService: VisitorsAnalyticsData,
+  ) {
+    this.themeService
+      .getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(theme => {
         this.setLegendItems(theme.variables.visitorsLegend);

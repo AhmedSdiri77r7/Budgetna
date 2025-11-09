@@ -3,7 +3,6 @@
 @import '~@nebular/theme/styles/global/breakpoints';
 
 @include nb-install-component() {
-
   display: block;
   height: 100%;
   width: 60%;
@@ -13,7 +12,8 @@
     background-color: nb-theme(background-basic-color-2);
   }
 
-  ::ng-deep .leaflet-top, ::ng-deep .leaflet-bottom {
+  ::ng-deep .leaflet-top,
+  ::ng-deep .leaflet-bottom {
     z-index: 997;
   }
 

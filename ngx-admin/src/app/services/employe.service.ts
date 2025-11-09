@@ -8,16 +8,20 @@ import { Employe } from '../model/employe';
 import { TokenStorageService } from './token-storage.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class EmployeService {
-  employe:Employe;
-  employeObject:Employe = new Employe(); 
+  employe: Employe;
+  employeObject: Employe = new Employe();
   $eventEmit = new EventEmitter();
-  
+
   private apiServerUrl = environment.apiBaseUrl;
 
-  constructor(private _router:Router,private tokenStorage:TokenStorageService,private http: HttpClient){}
+  constructor(
+    private _router: Router,
+    private tokenStorage: TokenStorageService,
+    private http: HttpClient,
+  ) {}
 
   public getEmployes(): Observable<Employe[]> {
     return this.http.get<Employe[]>(`${this.apiServerUrl}/getAllEmployes`);
@@ -25,51 +29,70 @@ export class EmployeService {
   public getAllEmployeNamesJPQL(): Observable<Employe[]> {
     return this.http.get<Employe[]>(`${this.apiServerUrl}/getAllEmployeNamesJPQL`);
   }
-  public addEmploye(employe: Employe,idDirection:number): Observable<Employe> {
-    return this.http.post<Employe>(this.apiServerUrl+"/ajouterEmployeEtAffecterDirection/"+idDirection, employe);
+  public addEmploye(employe: Employe, idDirection: number): Observable<Employe> {
+    return this.http.post<Employe>(this.apiServerUrl + '/ajouterEmployeEtAffecterDirection/' + idDirection, employe);
   }
   public addEmploye1(employe: Employe): Observable<Employe> {
-    return this.http.post<Employe>(this.apiServerUrl+"/ajouterEmployer/",employe);
+    return this.http.post<Employe>(this.apiServerUrl + '/ajouterEmployer/', employe);
   }
   public affecterEmployeADirection(idDirection: number, idEmploye: number): Observable<Employe> {
-    return this.http.put<Employe>(this.apiServerUrl + "/affecterEmployeADirection/" +  idDirection + "/" + idEmploye  , {});
+    return this.http.put<Employe>(
+      this.apiServerUrl + '/affecterEmployeADirection/' + idDirection + '/' + idEmploye,
+      {},
+    );
   }
-  
-  getEmployePrenomById(idEmploye:number): Observable<Employe> {
-    return this.http.get<Employe>(this.apiServerUrl+"/getEmployePrenomById/"+idEmploye);
+
+  getEmployePrenomById(idEmploye: number): Observable<Employe> {
+    return this.http.get<Employe>(this.apiServerUrl + '/getEmployePrenomById/' + idEmploye);
   }
-  getEmployeById(idEmploye:number): Observable<Employe> {
-    return this.http.get<Employe>(this.apiServerUrl+"/getemployeById/"+idEmploye);
+  getEmployeById(idEmploye: number): Observable<Employe> {
+    return this.http.get<Employe>(this.apiServerUrl + '/getemployeById/' + idEmploye);
   }
-  sendEventData(idEmploye : number):any{
-      
-    this.getEmployeById(idEmploye).pipe(take(1)).subscribe(x=>{
-      
-      this.employe=x;
-      this.$eventEmit.emit(this.employe);
-      return x;
-    },err => {
-      this._router.navigateByUrl("/auth");
-      this.tokenStorage.signOut();
-    });
-    
+
+  findById(idEmploye: number): Observable<Employe> {
+    return this.getEmployeById(idEmploye);
   }
-  
+  sendEventData(idEmploye: number): any {
+    this.getEmployeById(idEmploye)
+      .pipe(take(1))
+      .subscribe(
+        x => {
+          this.employe = x;
+          this.$eventEmit.emit(this.employe);
+          return x;
+        },
+        err => {
+          this._router.navigateByUrl('/auth');
+          this.tokenStorage.signOut();
+        },
+      );
+  }
+
   public deleteEmploye(employeId: number): Observable<void> {
-    return this.http.delete<void>(this.apiServerUrl+"/deleteEmployeById/"+employeId);
+    return this.http.delete<void>(this.apiServerUrl + '/deleteEmployeById/' + employeId);
   }
 
-  getEmployerByDirection(idDirection : number):any{
+  getEmployerByDirection(idDirection: number): any {
     console.log(idDirection);
-    return this.http.get<Employe>(this.apiServerUrl+"/getEmployeByDirection/"+idDirection)
+    return this.http.get<Employe>(this.apiServerUrl + '/getEmployeByDirection/' + idDirection);
   }
 
-  getEmployeByEmail(email: String):any{
-    console.log("email in service :"+email);
-    console.log("type of email in service :"+typeof(email));
-    return this.http.get<Employe>(this.apiServerUrl+"/getEmployeByEmail/"+email)
+  getEmployeByEmail(email: String): any {
+    console.log('email in service :' + email);
+    console.log('type of email in service :' + typeof email);
+    return this.http.get<Employe>(this.apiServerUrl + '/getEmployeByEmail/' + email);
   }
 
+  // Upload image pour un employé
+  uploadImage(empId: number, file: File): Observable<Employe> {
+    const formData = new FormData();
+    formData.append('image', file); // correspond à @RequestParam("image")
+    return this.http.post<Employe>(`${this.apiServerUrl}/uploadImage/${empId}`, formData);
+  }
 
-  
+  // Récupérer l'URL complète de l'image
+  getEmployeeImageUrl(filename: string): string {
+    if (!filename) return 'assets/default-avatar.png';
+    return `${this.apiServerUrl}/image/${filename}?t=${new Date().getTime()}`;
+  }
 }

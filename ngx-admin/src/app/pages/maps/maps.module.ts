@@ -8,17 +8,8 @@ import { ThemeModule } from '../../@theme/theme.module';
 import { MapsRoutingModule, routedComponents } from './maps-routing.module';
 
 @NgModule({
-  imports: [
-    ThemeModule,
-    GoogleMapsModule,
-    LeafletModule.forRoot(),
-    MapsRoutingModule,
-    NgxEchartsModule,
-    NbCardModule,
-  ],
+  imports: [ThemeModule, GoogleMapsModule, LeafletModule.forRoot(), MapsRoutingModule, NgxEchartsModule, NbCardModule],
   exports: [],
-  declarations: [
-    ...routedComponents,
-  ],
+  declarations: [...routedComponents],
 })
-export class MapsModule { }
+export class MapsModule {}

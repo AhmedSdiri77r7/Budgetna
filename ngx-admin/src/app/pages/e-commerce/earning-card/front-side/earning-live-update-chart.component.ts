@@ -6,12 +6,7 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 @Component({
   selector: 'ngx-earning-live-update-chart',
   styleUrls: ['earning-card-front.component.scss'],
-  template: `
-    <div echarts
-         class="echart"
-         [options]="option"
-         (chartInit)="onChartInit($event)"></div>
-  `,
+  template: ` <div echarts class="echart" [options]="option" (chartInit)="onChartInit($event)"></div> `,
 })
 export class EarningLiveUpdateChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   private alive = true;
@@ -21,12 +16,13 @@ export class EarningLiveUpdateChartComponent implements AfterViewInit, OnDestroy
   option: any;
   echartsInstance;
 
-  constructor(private theme: NbThemeService,
-              private layoutService: LayoutService) {
-    this.layoutService.onSafeChangeLayoutSize()
-      .pipe(
-        takeWhile(() => this.alive),
-      )
+  constructor(
+    private theme: NbThemeService,
+    private layoutService: LayoutService,
+  ) {
+    this.layoutService
+      .onSafeChangeLayoutSize()
+      .pipe(takeWhile(() => this.alive))
       .subscribe(() => this.resizeChart());
   }
 
@@ -37,7 +33,8 @@ export class EarningLiveUpdateChartComponent implements AfterViewInit, OnDestroy
   }
 
   ngAfterViewInit() {
-    this.theme.getJsTheme()
+    this.theme
+      .getJsTheme()
       .pipe(
         delay(1),
         takeWhile(() => this.alive),
@@ -123,13 +120,16 @@ export class EarningLiveUpdateChartComponent implements AfterViewInit, OnDestroy
           },
           areaStyle: {
             normal: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                offset: 0,
-                color: earningLineTheme.gradFrom,
-              }, {
-                offset: 1,
-                color: earningLineTheme.gradTo,
-              }]),
+              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                {
+                  offset: 0,
+                  color: earningLineTheme.gradFrom,
+                },
+                {
+                  offset: 1,
+                  color: earningLineTheme.gradTo,
+                },
+              ]),
               opacity: 1,
             },
           },
@@ -142,9 +142,11 @@ export class EarningLiveUpdateChartComponent implements AfterViewInit, OnDestroy
 
   updateChartOptions(chartData: { value: [string, number] }[]) {
     this.echartsInstance.setOption({
-      series: [{
-        data: chartData,
-      }],
+      series: [
+        {
+          data: chartData,
+        },
+      ],
     });
   }
 

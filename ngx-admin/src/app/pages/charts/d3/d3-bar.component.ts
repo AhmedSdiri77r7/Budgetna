@@ -11,12 +11,12 @@ import { NbThemeService } from '@nebular/theme';
       [yAxis]="showYAxis"
       [legend]="showLegend"
       [xAxisLabel]="xAxisLabel"
-      [yAxisLabel]="yAxisLabel">
+      [yAxisLabel]="yAxisLabel"
+    >
     </ngx-charts-bar-vertical>
   `,
 })
 export class D3BarComponent implements OnDestroy {
-
   results = [
     { name: 'Germany', value: 8940 },
     { name: 'USA', value: 5000 },

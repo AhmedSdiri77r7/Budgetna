@@ -4,9 +4,7 @@ import { BudgetInitial } from '../../../model/budgetInitial';
 
 @Component({
   selector: 'ngx-chartjs-bar',
-  template: `
-    <chart type="bar" [data]="data" [options]="options"></chart>
-  `,
+  template: ` <chart type="bar" [data]="data" [options]="options"></chart> `,
 })
 export class ChartjsBarComponent implements OnDestroy, OnChanges {
   @Input() budgets: BudgetInitial[] = [];
@@ -76,13 +74,12 @@ export class ChartjsBarComponent implements OnDestroy, OnChanges {
           ],
         },
       };
-      
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('budgets' in changes) {
-      console.log(this.budgets); 
+      console.log(this.budgets);
 
       this.updateChartData();
     }
@@ -92,10 +89,10 @@ export class ChartjsBarComponent implements OnDestroy, OnChanges {
     if (this.budgets.length > 0) {
       const tauxBudgets = this.budgets.map(budget => budget.tauxBudget);
       const budgetNames = this.budgets.map(budget => budget.name);
-  
+
       this.data.datasets[0].data = tauxBudgets;
       this.data.labels = budgetNames;
-  
+
       console.log(this.data); // Verify the data object
     }
   }

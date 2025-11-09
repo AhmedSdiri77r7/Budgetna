@@ -18,40 +18,34 @@ import { MENU_ITEMS_ADMIN } from './pages-menu-admin';
     </ngx-one-column-layout>
   `,
 })
-export class PagesComponent implements OnInit{
+export class PagesComponent implements OnInit {
+  menu: NbMenuItem[];
+  emp: Employe;
 
-  menu : NbMenuItem[]
-  emp : Employe ;
-
-  constructor(private _router:Router,private tokenStorage:TokenStorageService,private empService: EmployeService) {
-
-  }
-
+  constructor(
+    private _router: Router,
+    private tokenStorage: TokenStorageService,
+    private empService: EmployeService,
+  ) {}
 
   ngOnInit(): void {
-    console.log("type"+typeof(localStorage.getItem('email')))
-    this.empService.getEmployeByEmail(localStorage.getItem('email')).subscribe(data => 
-      {
+    console.log('type' + typeof localStorage.getItem('email'));
+    this.empService.getEmployeByEmail(localStorage.getItem('email')).subscribe(
+      data => {
         this.emp = data;
-        console.log("employe"+this.emp)
-        console.log("employe role : "+this.emp.role)
+        console.log('employe' + this.emp);
+        console.log('employe role : ' + this.emp.role);
         this.menu = MENU_ITEMS_ADMIN;
-        if(this.emp.role == "ADMINISTRATEUR"){
-        this.menu = MENU_ITEMS_ADMIN;
-        }else{
+        if (this.emp.role == 'ADMINISTRATEUR') {
+          this.menu = MENU_ITEMS_ADMIN;
+        } else {
           this.menu = MENU_ITEMS;
-    }
-      
-      },err => {
-        this._router.navigateByUrl("/auth");
+        }
+      },
+      err => {
+        this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
-      });
-    
-
-    
-     
+      },
+    );
   }
-
-  
-  
 }

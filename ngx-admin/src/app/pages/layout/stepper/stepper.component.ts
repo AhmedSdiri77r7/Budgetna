@@ -10,7 +10,6 @@ import { NbThemeService } from '@nebular/theme';
   selector: 'ngx-stepper',
   templateUrl: 'stepper.component.html',
   styleUrls: ['stepper.component.scss'],
-
 })
 export class StepperComponent implements OnInit {
   firstForm: FormGroup;
@@ -27,15 +26,13 @@ export class StepperComponent implements OnInit {
     private _router: Router,
     private tokenStorage: TokenStorageService,
     private employeService: EmployeService,
-    private themeService: NbThemeService) {
-      this.themeService.onThemeChange()
-        .subscribe((theme) => {
-          // Set the decoration light color based on the current theme
-          this.decorationLightColor = theme.variables.decorationLight;
-        });
-        
-    }
-  
+    private themeService: NbThemeService,
+  ) {
+    this.themeService.onThemeChange().subscribe(theme => {
+      // Set the decoration light color based on the current theme
+      this.decorationLightColor = theme.variables.decorationLight;
+    });
+  }
 
   ngOnInit(): void {
     this.firstForm = this.fb.group({
@@ -59,20 +56,26 @@ export class StepperComponent implements OnInit {
     if (this.secondForm.valid) {
       const email = this.secondForm.get('secondCtrl').value; // Get the value of the email input field
       this.employeService.getEmployeByEmail(email).subscribe(
-        (employe) => {
+        employe => {
           console.log('Employe:', employe);
           this.email = employe.email;
-          this.employe = employe; // Assign the retrieved employe object to a property in your component
+          // Assign the retrieved employe object and compute a stable image URL once
+          this.employe = employe;
+          const filename =
+            (employe as any).image || (employe as any).imageUrl || (employe as any).imageName || (employe as any).photo;
+          (this.employe as any)._imageUrl = filename
+            ? this.employeService.getEmployeeImageUrl(filename)
+            : 'assets/default-avatar.png';
           this.stepper.next(); // Move to the next step in the mat-stepper
         },
-        (error) => {
+        error => {
           console.error('Error:', error);
           // Set a default value for this.email and this.employe in case of error
           this.email = 'N/A'; // Or any other default value that makes sense in your use case
           this.employe = null;
           this._router.navigateByUrl('/auth');
           this.tokenStorage.signOut();
-        }
+        },
       );
     }
   }
@@ -81,16 +84,22 @@ export class StepperComponent implements OnInit {
     this.thirdForm.markAsDirty();
     // Use the updated email value to fetch employee data
     this.employeService.getEmployeByEmail(this.email).subscribe(
-      (employe) => {
+      employe => {
         console.log('Employe:', employe);
-        // Handle fetched employee data as needed
+        // Assign and compute stable image URL as above
+        this.employe = employe;
+        const filename =
+          (employe as any).image || (employe as any).imageUrl || (employe as any).imageName || (employe as any).photo;
+        (this.employe as any)._imageUrl = filename
+          ? this.employeService.getEmployeeImageUrl(filename)
+          : 'assets/default-avatar.png';
       },
-      (error) => {
+      error => {
         console.error('Error:', error);
         // Handle error as needed
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
-      }
+      },
     );
   }
 }

@@ -7,12 +7,10 @@ import { SmartTableData } from '../../../@core/data/smart-table';
 import { Employe } from '../../../model/employe';
 import { EmployeService } from '../../../services/employe.service';
 
-
 @Component({
   selector: 'ngx-smart-table',
   templateUrl: './smart-table.component.html',
   styleUrls: ['./smart-table.component.scss'],
-
 })
 export class SmartTableComponent {
   [x: string]: any;
@@ -55,7 +53,7 @@ export class SmartTableComponent {
         title: 'email',
         type: 'string',
       },
-     
+
       direction: {
         title: 'direction',
         type: 'string',
@@ -63,24 +61,19 @@ export class SmartTableComponent {
     },
   };
 
-  data = [
-    this.service
-  ];
+  data = [this.service];
 
   source: LocalDataSource = new LocalDataSource();
 
- 
-
-
-
-  constructor(private service: SmartTableData, employeService: EmployeService) {
+  constructor(
+    private service: SmartTableData,
+    employeService: EmployeService,
+  ) {
     const data = this.service.getData();
     this.source.load(this.data);
   }
 
-
-  
-   ngOnInit(): void {
+  ngOnInit(): void {
     this.getUsers();
   }
   public getUsers(): void {
@@ -91,10 +84,9 @@ export class SmartTableComponent {
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
-      }
+      },
     );
   }
-
 
   public addEmploye(addForm: NgForm): void {
     document.getElementById('add-users-form').click();
@@ -107,11 +99,9 @@ export class SmartTableComponent {
       (error: HttpErrorResponse) => {
         alert(error.message);
         addForm.reset();
-      }
+      },
     );
   }
-
-
 
   public onUpdateUsers(listemploye: Employe): void {
     this.employeService.updateEmploye(this.listemploye).subscribe(
@@ -121,7 +111,7 @@ export class SmartTableComponent {
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
-      }
+      },
     );
   }
 
@@ -133,7 +123,7 @@ export class SmartTableComponent {
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
-      }
+      },
     );
   }
 

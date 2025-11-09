@@ -26,7 +26,15 @@ import { AddCompteAnalytiqueComponent } from './compte-analytique/add-compte-ana
 import { UpdateCompteAnalytiqueComponent } from './compte-analytique/update-compte-analytique/update-compte-analytique.component';
 import { ChartModule } from 'angular2-chartjs';
 import { BudgetReviseComponent } from './compte-analytique/budget-revise/budget-revise.component';
-
+import {
+  NbCardModule,
+  NbButtonModule,
+  NbIconModule,
+  NbInputModule,
+  NbSpinnerModule,
+  NbTooltipModule,
+  NbDialogModule,
+} from '@nebular/theme';
 
 @NgModule({
   imports: [
@@ -39,7 +47,13 @@ import { BudgetReviseComponent } from './compte-analytique/budget-revise/budget-
     MatDialogModule,
     FormsModule,
     ChartModule,
-    
+    NbCardModule, // <- ajouté
+    NbButtonModule, // <- ajouté
+    NbIconModule, // <- ajouté
+    NbInputModule, // <- ajouté
+    NbSpinnerModule, // <- ajouté
+    NbTooltipModule, // <- ajouté
+    NbDialogModule.forChild(), // <- nécessaire si tu ouvres des dialogs depuis ce module
   ],
   declarations: [
     PagesComponent,
@@ -61,5 +75,4 @@ import { BudgetReviseComponent } from './compte-analytique/budget-revise/budget-
     BudgetReviseComponent,
   ],
 })
-export class PagesModule {
-}
+export class PagesModule {}

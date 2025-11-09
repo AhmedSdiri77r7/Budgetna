@@ -7,17 +7,15 @@
   <div class="chart-info">
     <div>Daily Income</div>
     <div class="h6">{{ earningLiveUpdateCardData.dailyIncome | ngxNumberWithCommas }}</div>
-    <div class="delta"
-         [class.up]="earningLiveUpdateCardData.delta.up"
-         [class.down]="!earningLiveUpdateCardData.delta.up">
-      <nb-icon [icon]="earningLiveUpdateCardData.delta.up ? 'arrow-up' : 'arrow-down'"
-               pack="eva"
-               class="direction">
+    <div
+      class="delta"
+      [class.up]="earningLiveUpdateCardData.delta.up"
+      [class.down]="!earningLiveUpdateCardData.delta.up"
+    >
+      <nb-icon [icon]="earningLiveUpdateCardData.delta.up ? 'arrow-up' : 'arrow-down'" pack="eva" class="direction">
       </nb-icon>
       {{ earningLiveUpdateCardData.delta.value }}%
     </div>
   </div>
-  <ngx-earning-live-update-chart
-    [liveUpdateChartData]="liveUpdateChartData">
-  </ngx-earning-live-update-chart>
+  <ngx-earning-live-update-chart [liveUpdateChartData]="liveUpdateChartData"> </ngx-earning-live-update-chart>
 </nb-card-body>

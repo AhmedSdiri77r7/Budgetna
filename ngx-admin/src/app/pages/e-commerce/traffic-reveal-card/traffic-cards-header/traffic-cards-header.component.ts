@@ -18,7 +18,8 @@ export class TrafficCardsHeaderComponent implements OnDestroy {
   currentTheme: string;
 
   constructor(private themeService: NbThemeService) {
-    this.themeService.getJsTheme()
+    this.themeService
+      .getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(theme => {
         this.currentTheme = theme.name;

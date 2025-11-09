@@ -3,7 +3,6 @@
   <div class="progress-line-prev"></div>
 </div>
 <div class="progress-line-container" [style.height.%]="barData.nextValue">
-  <div class="progress-line-now" [class.success]="successDelta" [class.failure]="!successDelta">
-  </div>
+  <div class="progress-line-now" [class.success]="successDelta" [class.failure]="!successDelta"></div>
 </div>
 <span class="value-now caption">{{ barData.nextDate }}</span>
