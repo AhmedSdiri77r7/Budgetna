@@ -1,14 +1,9 @@
 package tn.esprit.spring.entities;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.*;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Getter
@@ -38,6 +33,8 @@ public class Employe implements Serializable {
 	//@NotNull
 	private Role role;
 
+	@Column(name = "image")
+	private String imageUrl;
 
 
 
@@ -122,6 +119,10 @@ public class Employe implements Serializable {
 		this.role = role;
 	}
 
+
+	public String getImageUrl() { return imageUrl; }
+	public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
 	public Direction getDirection() {
 		return direction;
 	}
@@ -149,6 +150,7 @@ public class Employe implements Serializable {
 		this.email = email;
 		this.password = password;
 		this.role = role;
+		this.imageUrl = imageUrl;
 	}
 
 

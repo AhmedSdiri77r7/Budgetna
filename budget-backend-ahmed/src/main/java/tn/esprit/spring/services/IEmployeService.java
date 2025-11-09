@@ -1,8 +1,10 @@
 package tn.esprit.spring.services;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.spring.entities.*;
 
 
@@ -35,7 +37,9 @@ public interface IEmployeService {
 	Employe getEmployeById(int id);
 
 	public List<Employe> getEmployeByDirection(int id);
+	Employe uploadImage(int employeId, MultipartFile imageFile) throws IOException;
+	Employe updateEmploye(Employe employe);
 
 	public Employe getUserByEmail(String email);
-	
+	public Employe updateImage(int employeId, String imageName) ;
 }
