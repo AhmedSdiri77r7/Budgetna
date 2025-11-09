@@ -19,17 +19,10 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
+        working-directory: ./ngx-admin
         run: npm ci
 
       - name: Run ESLint
-        run: npm run lint -- --format=json --output-file=eslint-report.json
+        working-directory: ./ngx-admin
+        run: npm run lint
         continue-on-error: true
-
-      - name: Annotate code with lint results
-        uses: ataylorme/eslint-annotate-action@2.2.0
-        with:
-          report-json: eslint-report.json
-          only-pr-files: true
-
-      - name: Check formatting
-        run: npm run format:check

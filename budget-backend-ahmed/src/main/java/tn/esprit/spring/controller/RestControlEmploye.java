@@ -1,23 +1,35 @@
 package tn.esprit.spring.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.web.multipart.MultipartFile;
 import tn.esprit.spring.entities.Contrat;
 import tn.esprit.spring.entities.Employe;
 import tn.esprit.spring.entities.Entreprise;
-import tn.esprit.spring.entities.BudgetInitial;
-import tn.esprit.spring.entities.Budget;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import java.net.MalformedURLException;
+import java.nio.file.*;
+import tn.esprit.spring.repository.EmployeRepository;
 import tn.esprit.spring.services.IContratService;
 import tn.esprit.spring.services.IEmployeService;
 import tn.esprit.spring.services.IBudgetService;
 import tn.esprit.spring.services.IEntrepriseService;
-
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
 public class RestControlEmploye {
@@ -31,7 +43,9 @@ public class RestControlEmploye {
 	IContratService icontratservice;
 	@Autowired
 	IBudgetService ibudgetservice;
-
+@Autowired
+EmployeRepository employeRepository;
+	private final Path imageStoragePath = Paths.get("src/main/resources/static/images");
 
 	// http://localhost:8081/SpringMVC/servlet/ajouterEmployer
 	//{"id":1,"nom":"Boughdiri", "prenom":"khaled", "email":"Khaled.kallel@ssiiconsulting.tn", "isActif":true, "role":"INGENIEUR"}
@@ -203,5 +217,61 @@ public class RestControlEmploye {
 	@GetMapping("/getEmployeByEmail/{email}")
 	@ResponseBody
 	public Employe getEmployeByEmail(@PathVariable("email") String email) {return iemployeservice.getUserByEmail(email);}
-	
+
+
+	@PostMapping("/uploadImage/{id}")
+	public ResponseEntity<Employe> uploadImage(
+			@PathVariable("id") int employeId,
+			@RequestParam("image") MultipartFile imageFile) throws IOException {
+
+		// Créer le dossier si nécessaire
+		Path uploadPath = Paths.get("C:/images/");
+		if (!Files.exists(uploadPath)) {
+			Files.createDirectories(uploadPath);
+		}
+
+		// Sauvegarder le fichier
+		Path filePath = uploadPath.resolve(imageFile.getOriginalFilename());
+		try (var inputStream = imageFile.getInputStream()) {
+			Files.copy(inputStream, filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+		}
+
+		// Mettre à jour l'employé
+		Employe employe = iemployeservice.getEmployeById(employeId); // récupérer existant
+		employe.setImageUrl(imageFile.getOriginalFilename());          // mettre le nom de l'image
+		Employe updatedEmploye = iemployeservice.updateEmploye(employe); // sauvegarder
+
+		return ResponseEntity.ok(updatedEmploye);
+	}
+
+
+
+	@GetMapping("/image/{filename:.+}")
+	public ResponseEntity<Resource> getEmployeeImage(@PathVariable String filename) {
+		try {
+			Path filePath = Paths.get("C:/images").resolve(filename).normalize(); // chemin complet
+			Resource resource = new UrlResource(filePath.toUri());
+
+			if (!resource.exists() || !resource.isReadable()) {
+				return ResponseEntity.notFound().build();
+			}
+
+			String contentType = Files.probeContentType(filePath);
+			if (contentType == null) {
+				contentType = "application/octet-stream";
+			}
+
+			return ResponseEntity.ok()
+					.contentType(MediaType.parseMediaType(contentType))
+					.body(resource);
+
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
 }

@@ -128,7 +128,7 @@ public class RestControlBudget {
 
 
 
-	
+
 	// URL : http://localhost:8081/SpringMVC/servlet/findAllBudgetInitialByEmployeJPQL/1
     @GetMapping(value = "findAllBudgetByEmployeJPQL/{idEmploye}")
     @ResponseBody
@@ -179,8 +179,8 @@ public class RestControlBudget {
 
 
     // URL : http://localhost:8081/SpringMVC/servlet/deleteBudgetInitialById/3
-    @DeleteMapping("/deleteBudgetInitialById/{idbudgetInitial}") 
-	@ResponseBody 
+    @DeleteMapping("/deleteBudgetInitialById/{idbudgetInitial}")
+	@ResponseBody
 	public void deleteBudgetInitialById(@PathVariable("idbudgetInitial") int idbudgetInitial) {
 		System.out.println("*********************************************************************");
 		ibudgetservice.deleteBudgetInitialById(idbudgetInitial);

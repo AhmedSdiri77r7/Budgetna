@@ -11,14 +11,14 @@ import tn.esprit.spring.entities.BudgetInitial;
 
 
 public interface IBudgetService {
-	
+
 	public int ajouterBudgetInitial(BudgetInitial budgetinitial);
 	public void affecterBudgetInitialADirection(int budgetinitialId, int depId);
 	public void ajouterBudget(int idBudgetInitial, int idEmploye, String Libelle, Date dateDebut, Date dateFin, String token);
 	public void validerBudget(int idBudgetInitial, int idEmploye,String Libelle, Date dateDebut, Date dateFin, int validateurId);
 	public List<Budget> findAllBudgetByEmployeJPQL(int idEmploye);
 	public List<Employe> getAllEmployeByBudgetInitial(int budgetinitialId);
-	
+
 	public List<BudgetInitial> getBudgetInitial();
 	  public List<Budget> getAllbd(String token);
 	public List<BudgetRevise> getBudgetRevise();

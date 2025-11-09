@@ -1,17 +1,19 @@
-name: Deploy Budgetna Fullstack
+﻿name: Deploy Budgetna Fullstack
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   backend:
     name: Deploy Spring Boot Backend
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: 🔹 Checkout repository
+      - name: 📦 Checkout repository
         uses: actions/checkout@v3
 
       - name: ☕ Set up Java 8
@@ -21,7 +23,7 @@ jobs:
           distribution: 'temurin'
 
       - name: 🧩 Build Spring Boot
-        working-directory: ./bpd
+        working-directory: ./budget-backend-ahmed
         run: mvn clean package -DskipTests
 
       - name: 🚀 Deploy to Azure App Service
@@ -29,15 +31,17 @@ jobs:
         with:
           app-name: budget-backend-ahmed
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ./bpd/target/BPDBackEnd-1.0.jar
+          package: ./budget-backend-ahmed/target/BPDBackEnd-1.0.jar
 
+    if: github.ref == 'refs/heads/main'
   frontend:
     name: Deploy Angular Frontend
     runs-on: ubuntu-latest
     needs: backend
+    if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: 🔹 Checkout repository
+      - name: 📦 Checkout repository
         uses: actions/checkout@v3
 
       - name: 🧩 Setup Node.js
