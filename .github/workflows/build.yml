@@ -52,7 +52,7 @@ jobs:
 
       - name: ⚡ Install Angular dependencies
         working-directory: ./ngx-admin
-        run: npm ci
+        run: npm install --legacy-peer-deps
 
       - name: 🛠️ Build Angular
         working-directory: ./ngx-admin
