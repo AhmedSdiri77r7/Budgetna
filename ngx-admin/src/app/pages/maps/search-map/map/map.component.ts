@@ -21,11 +21,8 @@ export class MapComponent implements OnInit {
   ngOnInit() {
     // set up current location
     if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.searchedPosition = new PositionModel(
-          position.coords.latitude,
-          position.coords.longitude,
-        );
+      navigator.geolocation.getCurrentPosition(position => {
+        this.searchedPosition = new PositionModel(position.coords.latitude, position.coords.longitude);
       });
     }
   }

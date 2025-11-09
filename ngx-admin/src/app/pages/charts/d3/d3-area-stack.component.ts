@@ -14,39 +14,53 @@ import { NbThemeService } from '@nebular/theme';
       [showYAxisLabel]="showYAxisLabel"
       [xAxisLabel]="xAxisLabel"
       [yAxisLabel]="yAxisLabel"
-      [autoScale]="autoScale">
+      [autoScale]="autoScale"
+    >
     </ngx-charts-area-chart>
   `,
 })
 export class D3AreaStackComponent implements OnDestroy {
-  multi = [{
-    name: 'Germany',
-    series: [{
-        name: '2010',
-        value: 7300000,
-      }, {
-        name: '2011',
-        value: 8940000,
-      }],
-  }, {
-    name: 'USA',
-    series: [{
-        name: '2010',
-        value: 7870000,
-      }, {
-        name: '2011',
-        value: 8270000,
-      }],
-  }, {
-    name: 'France',
-    series: [{
-        name: '2010',
-        value: 5000002,
-      }, {
-        name: '2011',
-        value: 5800000,
-      }],
-  }];
+  multi = [
+    {
+      name: 'Germany',
+      series: [
+        {
+          name: '2010',
+          value: 7300000,
+        },
+        {
+          name: '2011',
+          value: 8940000,
+        },
+      ],
+    },
+    {
+      name: 'USA',
+      series: [
+        {
+          name: '2010',
+          value: 7870000,
+        },
+        {
+          name: '2011',
+          value: 8270000,
+        },
+      ],
+    },
+    {
+      name: 'France',
+      series: [
+        {
+          name: '2010',
+          value: 5000002,
+        },
+        {
+          name: '2011',
+          value: 5800000,
+        },
+      ],
+    },
+  ];
   showLegend = true;
   autoScale = true;
   showXAxis = true;

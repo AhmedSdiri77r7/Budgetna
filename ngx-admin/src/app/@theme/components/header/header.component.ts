@@ -15,7 +15,6 @@ import { MailingService } from '../../../services/mailing.service';
   templateUrl: './header.component.html',
 })
 export class HeaderComponent implements OnInit, OnDestroy {
-
   private destroy$: Subject<void> = new Subject<void>();
   userPictureOnly: boolean = false;
   user: any;
@@ -41,38 +40,44 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   currentTheme = 'default';
 
-  userMenu = [ { title: 'Profile' }, { title: 'Log out' } ];
+  userMenu = [{ title: 'Profile' }, { title: 'Log out' }];
 
-  constructor(private _router:Router,private tokenStorage:TokenStorageService,private sidebarService: NbSidebarService,
-              private menuService: NbMenuService,
-              private themeService: NbThemeService,
-              private userService: UserData,
-              private layoutService: LayoutService,
-              private mailingService: MailingService,
-              private breakpointService: NbMediaBreakpointsService) {
-  }
+  constructor(
+    private _router: Router,
+    private tokenStorage: TokenStorageService,
+    private sidebarService: NbSidebarService,
+    private menuService: NbMenuService,
+    private themeService: NbThemeService,
+    private userService: UserData,
+    private layoutService: LayoutService,
+    private mailingService: MailingService,
+    private breakpointService: NbMediaBreakpointsService,
+  ) {}
 
   ngOnInit() {
     this.currentTheme = this.themeService.currentTheme;
 
-    this.userService.getUsers()
+    this.userService
+      .getUsers()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any) => this.user = users.nick)
+      .subscribe((users: any) => (this.user = users.nick));
 
     const { xl } = this.breakpointService.getBreakpointsMap();
-    this.themeService.onMediaQueryChange()
+    this.themeService
+      .onMediaQueryChange()
       .pipe(
         map(([, currentBreakpoint]) => currentBreakpoint.width < xl),
         takeUntil(this.destroy$),
       )
-      .subscribe((isLessThanXl: boolean) => this.userPictureOnly = isLessThanXl);
+      .subscribe((isLessThanXl: boolean) => (this.userPictureOnly = isLessThanXl));
 
-    this.themeService.onThemeChange()
+    this.themeService
+      .onThemeChange()
       .pipe(
         map(({ name }) => name),
         takeUntil(this.destroy$),
       )
-      .subscribe(themeName => this.currentTheme = themeName);
+      .subscribe(themeName => (this.currentTheme = themeName));
   }
 
   ngOnDestroy() {
@@ -96,31 +101,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  logout(){
-    this._router.navigateByUrl("/auth");
+  logout() {
+    this._router.navigateByUrl('/auth');
     this.tokenStorage.signOut();
     const emailData = {
       to: 'destinataire@example.com',
       from: 'expediteur@example.com',
       subject: 'Déconnexion du site',
-      text: 'L\'utilisateur s\'est déconnecté du site.',
+      text: "L'utilisateur s'est déconnecté du site.",
     };
-  
-    this.mailingService.sendEmail(emailData)
-      .subscribe(
-        () => {
-          console.log('E-mail envoyé avec succès');
-          this._router.navigateByUrl('/auth');
-          this.tokenStorage.signOut();
-        },
-        (error) => {
-          console.error('Erreur lors de l\'envoi de l\'e-mail', error);
-          this._router.navigateByUrl('/auth');
-          this.tokenStorage.signOut();
-        }
-      );
+
+    this.mailingService.sendEmail(emailData).subscribe(
+      () => {
+        console.log('E-mail envoyé avec succès');
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
+      error => {
+        console.error("Erreur lors de l'envoi de l'e-mail", error);
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
+    );
   }
-   
-  
-  
 }

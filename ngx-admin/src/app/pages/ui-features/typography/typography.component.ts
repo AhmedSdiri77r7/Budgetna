@@ -11,14 +11,14 @@ export class TypographyComponent implements OnDestroy {
   breakpoints: any;
   themeSubscription: any;
 
-  constructor(private themeService: NbThemeService,
-              private breakpointService: NbMediaBreakpointsService) {
-
+  constructor(
+    private themeService: NbThemeService,
+    private breakpointService: NbMediaBreakpointsService,
+  ) {
     this.breakpoints = this.breakpointService.getBreakpointsMap();
-    this.themeSubscription = this.themeService.onMediaQueryChange()
-      .subscribe(([oldValue, newValue]) => {
-        this.breakpoint = newValue;
-      });
+    this.themeSubscription = this.themeService.onMediaQueryChange().subscribe(([oldValue, newValue]) => {
+      this.breakpoint = newValue;
+    });
   }
 
   ngOnDestroy() {

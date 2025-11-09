@@ -7,7 +7,6 @@ import { NbThemeService } from '@nebular/theme';
 import { combineLatest } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 
-
 @Component({
   selector: 'ngx-country-orders-map',
   styleUrls: ['./country-orders-map.component.scss'],
@@ -16,7 +15,6 @@ import { takeWhile } from 'rxjs/operators';
   `,
 })
 export class CountryOrdersMapComponent implements OnDestroy {
-
   @Input() countryId: string;
 
   @Output() select: EventEmitter<any> = new EventEmitter();
@@ -31,21 +29,16 @@ export class CountryOrdersMapComponent implements OnDestroy {
     minZoom: 2,
     maxZoom: 6,
     zoomControl: false,
-    center: L.latLng({lat: 38.991709, lng: -76.886109}),
-    maxBounds: new L.LatLngBounds(
-      new L.LatLng(-89.98155760646617, -180),
-      new L.LatLng(89.99346179538875, 180),
-    ),
+    center: L.latLng({ lat: 38.991709, lng: -76.886109 }),
+    maxBounds: new L.LatLngBounds(new L.LatLng(-89.98155760646617, -180), new L.LatLng(89.99346179538875, 180)),
     maxBoundsViscosity: 1.0,
   };
 
-  constructor(private ecMapService: CountryOrdersMapService,
-              private theme: NbThemeService) {
-
-    combineLatest([
-      this.ecMapService.getCords(),
-      this.theme.getJsTheme(),
-    ])
+  constructor(
+    private ecMapService: CountryOrdersMapService,
+    private theme: NbThemeService,
+  ) {
+    combineLatest([this.ecMapService.getCords(), this.theme.getJsTheme()])
       .pipe(takeWhile(() => this.alive))
       .subscribe(([cords, config]: [any, any]) => {
         this.currentTheme = config.variables.countryOrders;
@@ -55,7 +48,7 @@ export class CountryOrdersMapComponent implements OnDestroy {
   }
 
   mapReady(map: L.Map) {
-    map.addControl(L.control.zoom({position: 'bottomright'}));
+    map.addControl(L.control.zoom({ position: 'bottomright' }));
 
     // fix the map fully displaying, existing leaflet bag
     setTimeout(() => {
@@ -64,27 +57,25 @@ export class CountryOrdersMapComponent implements OnDestroy {
   }
 
   private createGeoJsonLayer(cords) {
-    return L.geoJSON(
-      cords as any,
-      {
-        style: () => ({
-          weight: this.currentTheme.countryBorderWidth,
-          fillColor: this.currentTheme.countryFillColor,
-          fillOpacity: 1,
-          color: this.currentTheme.countryBorderColor,
-          opacity: 1,
-        }),
-        onEachFeature: (f, l) => {
-          this.onEachFeature(f, l);
-        },
-      });
+    return L.geoJSON(cords as any, {
+      style: () => ({
+        weight: this.currentTheme.countryBorderWidth,
+        fillColor: this.currentTheme.countryFillColor,
+        fillOpacity: 1,
+        color: this.currentTheme.countryBorderColor,
+        opacity: 1,
+      }),
+      onEachFeature: (f, l) => {
+        this.onEachFeature(f, l);
+      },
+    });
   }
 
   private onEachFeature(feature, layer) {
     layer.on({
-      mouseover: (e) => this.highlightFeature(e.target),
-      mouseout: (e) => this.moveout(e.target),
-      click: (e) => this.selectFeature(e.target),
+      mouseover: e => this.highlightFeature(e.target),
+      mouseout: e => this.moveout(e.target),
+      click: e => this.selectFeature(e.target),
     });
   }
 
@@ -140,5 +131,4 @@ export class CountryOrdersMapComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.alive = false;
   }
-
 }

@@ -1,4 +1,5 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {
   NbAccordionModule,
@@ -7,7 +8,19 @@ import {
   NbListModule,
   NbRouteTabsetModule,
   NbStepperModule,
-  NbTabsetModule, NbUserModule,
+  NbTabsetModule,
+  NbUserModule,
+  NbIconModule,
+  NbSelectModule,
+  NbInputModule,
+  NbDatepickerModule,
+  NbDialogModule,
+  NbAlertModule,
+  NbToastrModule,
+  NbSpinnerModule,
+  NbFormFieldModule,
+  NbBadgeModule,
+  NbTooltipModule,
 } from '@nebular/theme';
 
 import { ThemeModule } from '../../@theme/theme.module';
@@ -20,24 +33,34 @@ import { InfiniteListComponent } from './infinite-list/infinite-list.component';
 import { NewsPostComponent } from './infinite-list/news-post/news-post.component';
 import { NewsPostPlaceholderComponent } from './infinite-list/news-post-placeholder/news-post-placeholder.component';
 import { AccordionComponent } from './accordion/accordion.component';
-
-
-
-
+import { ConfirmationDialogComponent } from './accordion/confirmation-dialog/confirmation-dialog.component';
+import { BudgetDetailsComponent } from './accordion/budget-details/budget-details.component';
 
 @NgModule({
   imports: [
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     ThemeModule,
-    NbTabsetModule,
+    NbAccordionModule,
+    NbButtonModule,
+    NbCardModule,
+    NbListModule,
     NbRouteTabsetModule,
     NbStepperModule,
-    NbCardModule,
-    NbButtonModule,
-    NbListModule,
-    NbAccordionModule,
+    NbTabsetModule,
     NbUserModule,
+    NbIconModule,
+    NbSelectModule,
+    NbInputModule,
+    NbDatepickerModule,
+    NbDialogModule.forChild(),
+    NbAlertModule,
+    NbToastrModule,
+    NbSpinnerModule,
+    NbFormFieldModule,
+    NbBadgeModule,
+    NbTooltipModule,
     LayoutRoutingModule,
   ],
   declarations: [
@@ -51,13 +74,10 @@ import { AccordionComponent } from './accordion/accordion.component';
     InfiniteListComponent,
     NewsPostComponent,
     AccordionComponent,
-
-
+    ConfirmationDialogComponent,
+    BudgetDetailsComponent,
   ],
-  providers: [
-   
-  
-  ],
+  providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class LayoutModule { }
+export class LayoutModule {}

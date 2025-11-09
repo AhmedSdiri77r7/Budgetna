@@ -10,8 +10,6 @@ interface TreeNode<T> {
   expanded?: boolean;
 }
 
-
-
 @Component({
   selector: 'ngx-tree-grid',
   templateUrl: './tree-grid.component.html',
@@ -20,8 +18,8 @@ interface TreeNode<T> {
 export class TreeGridComponent {
   public directions: Direction[];
   customColumn = 'name';
-  defaultColumns = [ 'users','direction', 'entreprise' , 'budgetInitials'];
-  allColumns = [ this.customColumn, ...this.defaultColumns ];
+  defaultColumns = ['users', 'direction', 'entreprise', 'budgetInitials'];
+  allColumns = [this.customColumn, ...this.defaultColumns];
 
   dataSource: NbTreeGridDataSource<Direction>;
 
@@ -29,14 +27,16 @@ export class TreeGridComponent {
   sortDirection: NbSortDirection = NbSortDirection.NONE;
   directionService: any;
 
-  constructor(private dataSourceBuilder: NbTreeGridDataSourceBuilder<Direction>, private DirectionsService: DirectionService) {
+  constructor(
+    private dataSourceBuilder: NbTreeGridDataSourceBuilder<Direction>,
+    private DirectionsService: DirectionService,
+  ) {
     this.dataSource = this.dataSourceBuilder.create(this.directions);
   }
 
   ngOnInit(): void {
     this.getDirection();
   }
-
 
   public getDirection(): void {
     this.directionService.getDirections().subscribe(
@@ -46,7 +46,7 @@ export class TreeGridComponent {
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
-      }
+      },
     );
   }
 
@@ -62,20 +62,17 @@ export class TreeGridComponent {
     return NbSortDirection.NONE;
   }
 
-
-
   getShowOn(index: number) {
     const minWithForMultipleColumns = 400;
     const nextColumnStep = 100;
-    return minWithForMultipleColumns + (nextColumnStep * index);
+    return minWithForMultipleColumns + nextColumnStep * index;
   }
 }
 
 @Component({
   selector: 'ngx-fs-icon',
   template: `
-    <nb-tree-grid-row-toggle [expanded]="expanded" *ngIf="isDir(); else fileIcon">
-    </nb-tree-grid-row-toggle>
+    <nb-tree-grid-row-toggle [expanded]="expanded" *ngIf="isDir(); else fileIcon"> </nb-tree-grid-row-toggle>
     <ng-template #fileIcon>
       <nb-icon icon="file-text-outline"></nb-icon>
     </ng-template>

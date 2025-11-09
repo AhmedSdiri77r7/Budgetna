@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { NbThemeService } from '@nebular/theme';
-import { interval , Subscription } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { switchMap, takeWhile } from 'rxjs/operators';
 import { LiveUpdateChart, EarningData } from '../../../../@core/data/earning';
 
@@ -20,9 +20,12 @@ export class EarningCardFrontComponent implements OnDestroy, OnInit {
   earningLiveUpdateCardData: LiveUpdateChart;
   liveUpdateChartData: { value: [string, number] }[];
 
-  constructor(private themeService: NbThemeService,
-              private earningService: EarningData) {
-    this.themeService.getJsTheme()
+  constructor(
+    private themeService: NbThemeService,
+    private earningService: EarningData,
+  ) {
+    this.themeService
+      .getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(theme => {
         this.currentTheme = theme.name;
@@ -42,7 +45,8 @@ export class EarningCardFrontComponent implements OnDestroy, OnInit {
   }
 
   private getEarningCardData(currency) {
-    this.earningService.getEarningCardData(currency)
+    this.earningService
+      .getEarningCardData(currency)
       .pipe(takeWhile(() => this.alive))
       .subscribe((earningLiveUpdateCardData: LiveUpdateChart) => {
         this.earningLiveUpdateCardData = earningLiveUpdateCardData;

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { of as observableOf,  Observable } from 'rxjs';
+import { of as observableOf, Observable } from 'rxjs';
 import { TemperatureHumidityData, Temperature } from '../data/temperature-humidity';
 
 @Injectable()
 export class TemperatureHumidityService extends TemperatureHumidityData {
-
   private temperatureDate: Temperature = {
     value: 24,
     min: 12,

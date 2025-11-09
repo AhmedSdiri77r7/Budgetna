@@ -26,8 +26,8 @@ label {
 }
 
 /* Style the input fields */
-input[type="email"],
-input[type="text"] {
+input[type='email'],
+input[type='text'] {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
@@ -46,7 +46,9 @@ button.custom-button {
   padding: 12px 20px;
   cursor: pointer;
   font-weight: bold;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 button.custom-button:hover {

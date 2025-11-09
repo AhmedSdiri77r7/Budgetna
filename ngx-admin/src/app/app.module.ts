@@ -11,7 +11,6 @@ import { CoreModule } from './@core/core.module';
 import { ThemeModule } from './@theme/theme.module';
 import { AppComponent } from './app.component';
 
-
 import { AppRoutingModule } from './app-routing.module';
 import {
   NbChatModule,
@@ -23,17 +22,15 @@ import {
   NbThemeModule,
   NbToastrModule,
   NbWindowModule,
-
 } from '@nebular/theme';
 import { PagesModule } from './pages/pages.module';
 import { authInterceptorProviders } from './services/auth.interceptor';
-
 
 @NgModule({
   declarations: [AppComponent],
   imports: [
     BrowserAnimationsModule,
-   
+
     BrowserModule,
     BrowserAnimationsModule,
     HttpClientModule,
@@ -55,5 +52,4 @@ import { authInterceptorProviders } from './services/auth.interceptor';
   providers: [authInterceptorProviders],
   bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

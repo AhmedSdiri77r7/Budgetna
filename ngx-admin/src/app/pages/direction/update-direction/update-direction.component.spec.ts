@@ -8,9 +8,8 @@ describe('UpdateDirectionComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ UpdateDirectionComponent ]
-    })
-    .compileComponents();
+      declarations: [UpdateDirectionComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -1,13 +1,13 @@
 import { NbMenuItem } from '@nebular/theme';
 
 export const MENU_ITEMS: NbMenuItem[] = [
- /* {
+  /* {
     title: 'E-commerce',
     icon: 'shopping-cart-outline',
     link: '/pages/dashboard',
     home: true,
   },*/
- /* {
+  /* {
     title: 'Gestion Entreprise',
     icon: 'home-outline',
     link: '/pages/entreprise',
@@ -17,7 +17,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     title: 'Maps',
     icon: 'map-outline',
     children: [
-    
+
       {
         title: 'Leaflet Maps',
         link: '/pages/maps/leaflet',
@@ -182,7 +182,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },
   */
- /* {
+  /* {
     title: 'Statistique',
     icon: 'pie-chart-outline',
     children: [
@@ -200,7 +200,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
       },
     ],
   },
-  
+
   {
     title: 'Editors',
     icon: 'text-outline',
@@ -240,7 +240,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     ],
   },*/
 
- /* {
+  /* {
     title: 'Auth',
     icon: 'lock-outline',
     children: [

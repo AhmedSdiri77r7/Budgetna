@@ -13,7 +13,6 @@ import { OrderProfitChartSummary, OrdersProfitChartData } from '../../../@core/d
   templateUrl: './charts-panel.component.html',
 })
 export class ECommerceChartsPanelComponent implements OnDestroy {
-
   private alive = true;
 
   chartPanelSummary: OrderProfitChartSummary[];
@@ -25,9 +24,10 @@ export class ECommerceChartsPanelComponent implements OnDestroy {
   @ViewChild('profitChart', { static: true }) profitChart: ProfitChartComponent;
 
   constructor(private ordersProfitChartService: OrdersProfitChartData) {
-    this.ordersProfitChartService.getOrderProfitChartSummary()
+    this.ordersProfitChartService
+      .getOrderProfitChartSummary()
       .pipe(takeWhile(() => this.alive))
-      .subscribe((summary) => {
+      .subscribe(summary => {
         this.chartPanelSummary = summary;
       });
 
@@ -53,7 +53,8 @@ export class ECommerceChartsPanelComponent implements OnDestroy {
   }
 
   getOrdersChartData(period: string) {
-    this.ordersProfitChartService.getOrdersChartData(period)
+    this.ordersProfitChartService
+      .getOrdersChartData(period)
       .pipe(takeWhile(() => this.alive))
       .subscribe(ordersChartData => {
         this.ordersChartData = ordersChartData;
@@ -61,7 +62,8 @@ export class ECommerceChartsPanelComponent implements OnDestroy {
   }
 
   getProfitChartData(period: string) {
-    this.ordersProfitChartService.getProfitChartData(period)
+    this.ordersProfitChartService
+      .getProfitChartData(period)
       .pipe(takeWhile(() => this.alive))
       .subscribe(profitChartData => {
         this.profitChartData = profitChartData;

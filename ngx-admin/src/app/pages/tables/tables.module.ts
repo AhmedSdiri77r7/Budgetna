@@ -1,4 +1,3 @@
-
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { NbCardModule, NbIconModule, NbInputModule, NbTreeGridModule } from '@nebular/theme';
@@ -18,14 +17,10 @@ import { FsIconComponent } from './tree-grid/tree-grid.component';
     ThemeModule,
     TablesRoutingModule,
     Ng2SmartTableModule,
-    HttpClientModule
-    
+    HttpClientModule,
   ],
 
   providers: [UserService],
-  declarations: [
-    ...routedComponents,
-    FsIconComponent,
-  ],
+  declarations: [...routedComponents, FsIconComponent],
 })
-export class TablesModule { }
+export class TablesModule {}

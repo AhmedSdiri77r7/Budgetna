@@ -22,7 +22,6 @@ import { TrafficChartData } from '../../../@core/data/traffic-chart';
   `,
 })
 export class TrafficComponent implements OnDestroy {
-
   private alive = true;
 
   trafficChartPoints: number[];
@@ -30,17 +29,21 @@ export class TrafficComponent implements OnDestroy {
   types = ['week', 'month', 'year'];
   currentTheme: string;
 
-  constructor(private themeService: NbThemeService,
-              private trafficChartService: TrafficChartData) {
-    this.themeService.getJsTheme()
+  constructor(
+    private themeService: NbThemeService,
+    private trafficChartService: TrafficChartData,
+  ) {
+    this.themeService
+      .getJsTheme()
       .pipe(takeWhile(() => this.alive))
       .subscribe(theme => {
-      this.currentTheme = theme.name;
-    });
+        this.currentTheme = theme.name;
+      });
 
-    this.trafficChartService.getTrafficChartData()
+    this.trafficChartService
+      .getTrafficChartData()
       .pipe(takeWhile(() => this.alive))
-      .subscribe((data) => {
+      .subscribe(data => {
         this.trafficChartPoints = data;
       });
   }

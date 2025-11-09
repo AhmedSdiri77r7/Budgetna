@@ -3,20 +3,16 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-echarts-multiple-xaxis',
-  template: `
-    <div echarts [options]="options" class="echart"></div>
-  `,
+  template: ` <div echarts [options]="options" class="echart"></div> `,
 })
 export class EchartsMultipleXaxisComponent implements AfterViewInit, OnDestroy {
   options: any = {};
   themeSubscription: any;
 
-  constructor(private theme: NbThemeService) {
-  }
+  constructor(private theme: NbThemeService) {}
 
   ngAfterViewInit() {
     this.themeSubscription = this.theme.getJsTheme().subscribe(config => {
-
       const colors: any = config.variables;
       const echarts: any = config.variables.echarts;
 
@@ -60,7 +56,9 @@ export class EchartsMultipleXaxisComponent implements AfterViewInit, OnDestroy {
               label: {
                 formatter: params => {
                   return (
-                    'Precipitation  ' + params.value + (params.seriesData.length ? '：' + params.seriesData[0].data : '')
+                    'Precipitation  ' +
+                    params.value +
+                    (params.seriesData.length ? '：' + params.seriesData[0].data : '')
                   );
                 },
               },
@@ -100,7 +98,9 @@ export class EchartsMultipleXaxisComponent implements AfterViewInit, OnDestroy {
               label: {
                 formatter: params => {
                   return (
-                    'Precipitation  ' + params.value + (params.seriesData.length ? '：' + params.seriesData[0].data : '')
+                    'Precipitation  ' +
+                    params.value +
+                    (params.seriesData.length ? '：' + params.seriesData[0].data : '')
                   );
                 },
               },

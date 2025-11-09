@@ -1,7 +1,6 @@
 @import '../../../@theme/styles/themes';
 
 @include nb-install-component() {
-
   .font-row {
     &:first-child {
       margin-bottom: 2rem;
@@ -49,7 +48,12 @@
       line-height: 1;
       align-items: flex-end;
 
-      h1, h2, h3, h4, h5, h6 {
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
         margin-bottom: 0;
       }
     }
@@ -95,7 +99,12 @@
       @include nb-rtl(margin-left, 1rem);
     }
 
-    h1, h2, h3, h4, h5, h6 {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
       margin-bottom: 0.25rem;
     }
   }

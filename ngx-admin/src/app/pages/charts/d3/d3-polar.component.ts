@@ -14,7 +14,8 @@ import { NbThemeService } from '@nebular/theme';
       [showYAxisLabel]="showYAxisLabel"
       [xAxisLabel]="xAxisLabel"
       [yAxisLabel]="yAxisLabel"
-      [autoScale]="autoScale">
+      [autoScale]="autoScale"
+    >
     </ngx-charts-polar-chart>
   `,
 })

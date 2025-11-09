@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { of as observableOf,  Observable,  BehaviorSubject } from 'rxjs';
+import { of as observableOf, Observable, BehaviorSubject } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 
 import { NbLayoutDirectionService, NbLayoutDirection } from '@nebular/theme';
@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class StateService implements OnDestroy {
-
   protected layouts: any = [
     {
       name: 'One Column',
@@ -47,13 +46,21 @@ export class StateService implements OnDestroy {
 
   alive = true;
 
-  constructor(private _router:Router,private tokenStorage:TokenStorageService,directionService: NbLayoutDirectionService) {
-    directionService.onDirectionChange()
+  constructor(
+    private _router: Router,
+    private tokenStorage: TokenStorageService,
+    directionService: NbLayoutDirectionService,
+  ) {
+    directionService
+      .onDirectionChange()
       .pipe(takeWhile(() => this.alive))
-      .subscribe(direction => this.updateSidebarIcons(direction),err => {
-        this._router.navigateByUrl("/auth");
-        this.tokenStorage.signOut();
-      })
+      .subscribe(
+        direction => this.updateSidebarIcons(direction),
+        err => {
+          this._router.navigateByUrl('/auth');
+          this.tokenStorage.signOut();
+        },
+      );
 
     this.updateSidebarIcons(directionService.getDirection());
   }
@@ -63,7 +70,7 @@ export class StateService implements OnDestroy {
   }
 
   private updateSidebarIcons(direction: NbLayoutDirection) {
-    const [ startSidebar, endSidebar ] = this.sidebars;
+    const [startSidebar, endSidebar] = this.sidebars;
     const isLtr = direction === NbLayoutDirection.LTR;
     const startIconClass = isLtr ? 'nb-layout-sidebar-left' : 'nb-layout-sidebar-right';
     const endIconClass = isLtr ? 'nb-layout-sidebar-right' : 'nb-layout-sidebar-left';

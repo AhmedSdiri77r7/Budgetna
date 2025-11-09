@@ -7,5 +7,5 @@ import { BudgetInitial } from '../../../model/budgetInitial';
   templateUrl: './chartjs.component.html',
 })
 export class ChartjsComponent {
-  @Input() budgets: BudgetInitial[] = []
+  @Input() budgets: BudgetInitial[] = [];
 }

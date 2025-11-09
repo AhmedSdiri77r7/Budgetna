@@ -12,10 +12,9 @@ import { BudgetService } from '../../../services/budget.service';
 @Component({
   selector: 'ngx-update-compte-analytique',
   templateUrl: './update-compte-analytique.component.html',
-  styleUrls: ['./update-compte-analytique.component.scss']
+  styleUrls: ['./update-compte-analytique.component.scss'],
 })
 export class UpdateCompteAnalytiqueComponent implements OnInit {
-
   direction: Direction = new Direction();
   selectedEntrepriseId: number;
   entreprises: Entreprise[];
@@ -28,34 +27,33 @@ export class UpdateCompteAnalytiqueComponent implements OnInit {
     private tokenStorage: TokenStorageService,
     private dialogRef: MatDialogRef<UpdateCompteAnalytiqueComponent>,
     private serviceEntreprise: EntrepriseService,
-    private serviceDirection: DirectionService
-  ) { }
+    private serviceDirection: DirectionService,
+  ) {}
 
   ngOnInit(): void {
     this.serviceEntreprise.getEntreprises().subscribe(
-      (data) => {
+      data => {
         this.entreprises = data;
       },
-      (err) => {
-        this._router.navigateByUrl("/auth");
+      err => {
+        this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
-      }
+      },
     );
 
     this.serviceBudget.getBudgetInitial().subscribe(
-      (data) => {
+      data => {
         this.budgetInitials = data;
       },
-      (error) => {
+      error => {
         console.log('Erreur lors de la récupération des budgets initiaux :', error);
-      }
+      },
     );
 
     this.direction.budgetInitial = new BudgetInitial();
- 
 
     this.serviceDirection.$eventEmit.subscribe(
-      (data) => {
+      data => {
         console.log(this.direction);
         this.direction = data;
         if (data.entreprise != null) {
@@ -63,10 +61,10 @@ export class UpdateCompteAnalytiqueComponent implements OnInit {
         }
         console.log(this.direction);
       },
-      (err) => {
-        this._router.navigateByUrl("/auth");
+      err => {
+        this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
-      }
+      },
     );
   }
 
@@ -74,17 +72,14 @@ export class UpdateCompteAnalytiqueComponent implements OnInit {
     this.serviceBudget.affecterBudgetInitialADirection(idBudgetInitial, idDirection).subscribe(
       () => {
         this.dialogRef.close();
-        this._router.navigateByUrl("/pages/compte-analytique").then(()=>window.location.reload());
+        this._router.navigateByUrl('/pages/compte-analytique').then(() => window.location.reload());
 
-
-        
-        console.log("Le budget initial a été affecté à la direction avec succès.");
+        console.log('Le budget initial a été affecté à la direction avec succès.');
         // Perform any additional actions after assigning the budget initial to the direction.
       },
-      (err) => {
+      err => {
         console.error("Une erreur s'est produite lors de l'affectation du budget initial à la direction :", err);
-      }
+      },
     );
   }
-  
 }

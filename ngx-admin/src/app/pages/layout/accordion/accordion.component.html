@@ -1,27 +1,229 @@
-<form [formGroup]="budgetForm" (ngSubmit)="onSubmit()" class="budget-form">
-  <label for="idBudgetInitial">sélectionner un Budget intial:</label>
-  <select id="idBudgetInitial" formControlName="idBudgetInitial">
-    <option *ngFor="let budget of budgetInitiaux" [value]="budget.id">{{ budget.name }}</option>
-  </select>
-  <br>
-  <label for="idEmploye">sélectionner un employe:</label>
-  <select id="selectedEmploye" formControlName="idEmploye">
-    <option *ngFor="let employe of listemploye " [value]="employe.id">{{ employe.nom }}</option>
-  </select>
-  <br>
-  <label for="libelle">libelle:</label>
-  <input type="text" id="libelle" formControlName="libelle">
-  <br>
-  <label for="dateDebut">Date Debut:</label>
-  <input type="date" id="dateDebut" formControlName="dateDebut">
-  <br>
-  <label for="dateFin">Date Fin:</label>
-  <input type="date" id="dateFin" formControlName="dateFin">
- 
-  <button type="submit">Valider</button>
-</form>
+<div class="row">
+  <!-- Formulaire de validation -->
+  <div class="col-12 col-lg-6">
+    <nb-card>
+      <nb-card-header>
+        <h5>Validation des Budgets</h5>
+      </nb-card-header>
+      <nb-card-body>
+        <form [formGroup]="budgetForm" (ngSubmit)="onSubmit()" class="budget-form">
+          <div class="form-group">
+            <label for="idBudgetInitial" class="label">Budget Initial</label>
+            <nb-select
+              fullWidth
+              id="idBudgetInitial"
+              formControlName="idBudgetInitial"
+              placeholder="Sélectionner un budget initial"
+            >
+              <nb-option *ngFor="let budget of budgetInitiaux" [value]="budget.id">
+                {{ budget.name }} - {{ budget.tauxBudget | currency: 'EUR' }}
+              </nb-option>
+            </nb-select>
+          </div>
 
+          <div class="form-group">
+            <label for="idEmploye" class="label">Employé</label>
+            <nb-select fullWidth id="selectedEmploye" formControlName="idEmploye" placeholder="Sélectionner un employé">
+              <nb-option *ngFor="let employe of listemploye" [value]="employe.id">
+                {{ employe.prenom }} {{ employe.nom }}
+              </nb-option>
+            </nb-select>
+          </div>
 
-<div *ngIf="validationMessage" class="validation-message">
-  {{ validationMessage }}
+          <div class="form-group">
+            <label for="libelle" class="label">Libellé</label>
+            <input
+              nbInput
+              fullWidth
+              type="text"
+              id="libelle"
+              formControlName="libelle"
+              placeholder="Entrez le libellé"
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="dateDebut" class="label">Date de début</label>
+              <input nbInput fullWidth type="date" id="dateDebut" formControlName="dateDebut" />
+            </div>
+
+            <div class="form-group col-md-6">
+              <label for="dateFin" class="label">Date de fin</label>
+              <input nbInput fullWidth type="date" id="dateFin" formControlName="dateFin" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <button nbButton status="primary" type="submit" [disabled]="!budgetForm.valid" hero>
+              <nb-icon icon="checkmark-circle-2-outline"></nb-icon>
+              Valider le Budget
+            </button>
+          </div>
+        </form>
+
+        <nb-alert *ngIf="validationMessage" [status]="validationStatus" closable>
+          {{ validationMessage }}
+        </nb-alert>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Historique des budgets -->
+  <div class="col-12 col-lg-6">
+    <nb-card>
+      <nb-card-header class="d-flex justify-content-between align-items-center">
+        <h5>Historique des Budgets</h5>
+        <div>
+          <button nbButton ghost (click)="openAddBudget()" class="mr-2">
+            <nb-icon icon="plus-outline"></nb-icon>
+            Ajouter
+          </button>
+          <button nbButton ghost (click)="exportToExcel()">
+            <nb-icon icon="download-outline"></nb-icon>
+            Exporter
+          </button>
+        </div>
+      </nb-card-header>
+
+      <nb-card-body>
+        <!-- Filtres -->
+        <form [formGroup]="searchForm" class="mb-4">
+          <div class="row">
+            <div class="col-md-4">
+              <input nbInput fullWidth placeholder="Rechercher un employé" formControlName="searchEmploye" />
+            </div>
+            <div class="col-md-3">
+              <input nbInput fullWidth type="date" formControlName="searchDateDebut" placeholder="Date début" />
+            </div>
+            <div class="col-md-3">
+              <input nbInput fullWidth type="date" formControlName="searchDateFin" placeholder="Date fin" />
+            </div>
+            <div class="col-md-2">
+              <nb-select fullWidth formControlName="searchStatut" placeholder="Statut">
+                <nb-option value="">Tous</nb-option>
+                <nb-option value="true">Validé</nb-option>
+                <nb-option value="false">En attente</nb-option>
+              </nb-select>
+            </div>
+          </div>
+        </form>
+
+        <!-- Table -->
+        <nb-card>
+          <nb-card-body>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Budget Initial</th>
+                  <th>Employé</th>
+                  <th>Libellé</th>
+                  <th>Date Début</th>
+                  <th>Date Fin</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let budget of budgets">
+                  <td>{{ budget.budgetInitial?.name }}</td>
+                  <td>{{ budget.budgetPK?.idEmploye }}</td>
+                  <td>{{ budget.budgetPK?.libelle }}</td>
+                  <td>{{ budget.budgetPK?.dateDebut | date }}</td>
+                  <td>{{ budget.budgetPK?.dateFin | date }}</td>
+                  <td>
+                    <nb-badge
+                      [text]="budget.iSvalide ? 'Validé' : 'En attente'"
+                      [status]="budget.iSvalide ? 'success' : 'warning'"
+                    >
+                    </nb-badge>
+                  </td>
+                  <td>
+                    <button
+                      nbButton
+                      ghost
+                      size="small"
+                      [nbTooltip]="'Voir les détails'"
+                      (click)="showDetails(budget)"
+                      class="mr-2"
+                    >
+                      <nb-icon icon="eye-outline"></nb-icon>
+                    </button>
+                    <button
+                      nbButton
+                      ghost
+                      size="small"
+                      status="danger"
+                      [nbTooltip]="'Supprimer'"
+                      *ngIf="!budget.iSvalide"
+                      (click)="deleteBudget(budget)"
+                    >
+                      <nb-icon icon="trash-2-outline"></nb-icon>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="budgets.length === 0">
+                  <td colspan="7" class="text-center">Aucun budget trouvé</td>
+                </tr>
+              </tbody>
+            </table>
+          </nb-card-body>
+        </nb-card>
+      </nb-card-body>
+    </nb-card>
+  </div>
 </div>
+
+<!-- Template pour ajouter un budget -->
+<ng-template #addBudgetModal>
+  <nb-card>
+    <nb-card-header class="d-flex justify-content-between align-items-center">
+      <h5>Ajouter un Budget</h5>
+      <button nbButton ghost (click)="closeAddBudgetModal()">
+        <nb-icon icon="close-outline"></nb-icon>
+      </button>
+    </nb-card-header>
+    <nb-card-body>
+      <form [formGroup]="addBudgetForm" (ngSubmit)="onAddBudgetSubmit()" class="budget-form">
+        <div class="form-group">
+          <label for="newBudgetInitial" class="label">Budget Initial</label>
+          <nb-select
+            fullWidth
+            id="newBudgetInitial"
+            formControlName="idBudgetInitial"
+            placeholder="Sélectionner un budget initial"
+          >
+            <nb-option *ngFor="let budget of budgetInitiaux" [value]="budget.id">
+              {{ budget.name }} - {{ budget.tauxBudget | currency: 'EUR' }}
+            </nb-option>
+          </nb-select>
+        </div>
+
+        <div class="form-group">
+          <label for="newLibelle" class="label">Libellé</label>
+          <input nbInput fullWidth id="newLibelle" formControlName="libelle" placeholder="Entrez le libellé" />
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="newDateDebut" class="label">Date de début</label>
+              <input nbInput fullWidth type="date" id="newDateDebut" formControlName="dateDebut" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="newDateFin" class="label">Date de fin</label>
+              <input nbInput fullWidth type="date" id="newDateFin" formControlName="dateFin" />
+            </div>
+          </div>
+        </div>
+
+        <button nbButton status="primary" type="submit" [disabled]="addBudgetForm.invalid || loading" fullWidth>
+          <nb-icon icon="save-outline"></nb-icon>
+          Enregistrer le Budget
+        </button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

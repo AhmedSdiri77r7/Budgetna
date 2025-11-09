@@ -4,14 +4,7 @@ import { CountryOrderData } from '../data/country-order';
 
 @Injectable()
 export class CountryOrderService extends CountryOrderData {
-
-  private countriesCategories = [
-    'Sofas',
-    'Furniture',
-    'Lighting',
-    'Tables',
-    'Textiles',
-  ];
+  private countriesCategories = ['Sofas', 'Furniture', 'Lighting', 'Tables', 'Textiles'];
   private countriesCategoriesLength = this.countriesCategories.length;
   private generateRandomData(nPoints: number): number[] {
     return Array.from(Array(nPoints)).map(() => {

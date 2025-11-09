@@ -1,1 +1,10 @@
-README.md
+node_modules/
+dist/
+coverage/
+*.log
+.angular/
+.vscode/
+.idea/
+*.min.js
+*.min.css
+CHANGELOG.md

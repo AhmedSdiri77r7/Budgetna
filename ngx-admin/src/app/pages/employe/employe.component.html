@@ -1,58 +1,40 @@
-<div class="container-xl">
-    <div class="table-responsive">
-      <div class="table-wrapper">
-        <div class="table-title">
-          <div class="row">
-            <div class="col-sm-5">
-              <h2>Gestion <b>Employe</b></h2>
-            </div>
-            <div class="col-sm-7">
-              <!-- Add employee button -->
-              <a (click)="onOpenDialogClick()" class="btn btn-secondary">
-                <i class="material-icons">&#xE147;</i>
-                <span>Ajouter un Employe</span>
-              </a>
-              <!-- Export to Excel button -->
-              <a (click)="exportAsXLSX()" class="btn btn-secondary">
-                <i class="material-icons">&#xE24D;</i>
-                <span>Export to Excel</span>
-              </a>
-            </div>
-          </div>
+<div class="row">
+  <div class="col-md-4 mb-4" *ngFor="let emp of listemploye">
+    <nb-card>
+      <nb-card-header class="d-flex justify-content-between align-items-center">
+        <div>{{ emp.nom }} {{ emp.prenom }}</div>
+        <div class="header-buttons">
+          <button nbButton size="tiny" status="primary">
+            <i class="material-icons">edit</i>
+          </button>
+          <button nbButton size="tiny" status="danger">
+            <i class="material-icons">delete</i>
+          </button>
         </div>
-        <table class="table table-striped table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nom Prenom</th>
-              <th>Role</th>
-              <th>E-mail</th>
-            
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Loop over the employee list -->
-            <tr *ngFor="let employe of listemploye">
-              <td>{{ employe.id }}</td>
-              <td><a>{{ employe.nom + " " + employe.prenom }}</a></td>
-              <td>{{ employe.role }}</td>
-              <td>{{ employe.email }}</td>
-          
-              <td>
-                <!-- Update employee button -->
-                <a class="affecter" title="Affecter" data-toggle="tooltip" (click)="updateEmploye(employe.id)">
-                  <i class="material-icons">&#xE8B8;</i>
-                </a>
-                <!-- Delete employee button -->
-                <a class="delete" title="Delete" data-toggle="tooltip" (click)="deleteEmploye(employe.id)">
-                  <i class="material-icons">&#xE5C9;</i>
-                </a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      </nb-card-header>
+
+      <nb-card-body class="text-center">
+        <!-- Prévisualisation locale -->
+        <img *ngIf="previewUrls[emp.id]; else existingImage" [src]="previewUrls[emp.id]" class="employee-avatar mb-2" />
+
+        <!-- Image existante depuis Spring Boot (accepte image ou imageUrl) -->
+        <ng-template #existingImage>
+          <img *ngIf="emp.image || emp.imageUrl; else noImage" [src]="getImageUrl(emp)" class="employee-avatar mb-2" />
+        </ng-template>
+
+        <!-- Avatar par défaut si aucune image -->
+        <ng-template #noImage>
+          <img src="assets/default-avatar.png" class="employee-avatar mb-2" />
+        </ng-template>
+
+        <p class="mb-1"><strong>Role:</strong> {{ emp.role }}</p>
+        <p class="mb-2"><strong>Email:</strong> {{ emp.email }}</p>
+
+        <input type="file" (change)="onFileSelected($event, emp.id)" accept="image/*" />
+        <button nbButton size="tiny" status="success" *ngIf="selectedFiles[emp.id]" (click)="uploadImage(emp.id)">
+          Upload
+        </button>
+      </nb-card-body>
+    </nb-card>
   </div>
-  
+</div>

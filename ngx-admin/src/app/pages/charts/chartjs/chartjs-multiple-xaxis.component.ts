@@ -3,9 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-chartjs-multiple-xaxis',
-  template: `
-    <chart type="line" [data]="data" [options]="options"></chart>
-  `,
+  template: ` <chart type="line" [data]="data" [options]="options"></chart> `,
 })
 export class ChartjsMultipleXaxisComponent implements OnDestroy {
   data: {};
@@ -14,39 +12,42 @@ export class ChartjsMultipleXaxisComponent implements OnDestroy {
 
   constructor(private theme: NbThemeService) {
     this.themeSubscription = this.theme.getJsTheme().subscribe(config => {
-
       const colors: any = config.variables;
       const chartjs: any = config.variables.chartjs;
 
       this.data = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        datasets: [{
-          label: 'Direction RH',
-          data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
-          borderColor: colors.primary,
-          backgroundColor: colors.primary,
-          fill: false,
-          borderDash: [5, 5],
-          pointRadius: 8,
-          pointHoverRadius: 10,
-        }, {
-          label: 'direction informatique',
-          data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
-          borderColor: colors.dangerLight,
-          backgroundColor: colors.dangerLight,
-          fill: false,
-          borderDash: [5, 5],
-          pointRadius: 8,
-          pointHoverRadius: 10,
-        }, {
-          label: 'direction finance',
-          data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
-          borderColor: colors.info,
-          backgroundColor: colors.info,
-          fill: false,
-          pointRadius: 8,
-          pointHoverRadius: 10,
-        }, ]
+        datasets: [
+          {
+            label: 'Direction RH',
+            data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
+            borderColor: colors.primary,
+            backgroundColor: colors.primary,
+            fill: false,
+            borderDash: [5, 5],
+            pointRadius: 8,
+            pointHoverRadius: 10,
+          },
+          {
+            label: 'direction informatique',
+            data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
+            borderColor: colors.dangerLight,
+            backgroundColor: colors.dangerLight,
+            fill: false,
+            borderDash: [5, 5],
+            pointRadius: 8,
+            pointHoverRadius: 10,
+          },
+          {
+            label: 'direction finance',
+            data: [this.random(), this.random(), this.random(), this.random(), this.random(), this.random()],
+            borderColor: colors.info,
+            backgroundColor: colors.info,
+            fill: false,
+            pointRadius: 8,
+            pointHoverRadius: 10,
+          },
+        ],
       };
 
       this.options = {

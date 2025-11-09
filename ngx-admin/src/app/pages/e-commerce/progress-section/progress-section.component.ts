@@ -8,15 +8,15 @@ import { takeWhile } from 'rxjs/operators';
   templateUrl: './progress-section.component.html',
 })
 export class ECommerceProgressSectionComponent implements OnDestroy {
-
   private alive = true;
 
   progressInfoData: ProgressInfo[];
 
   constructor(private statsProgressBarService: StatsProgressBarData) {
-    this.statsProgressBarService.getProgressInfoData()
+    this.statsProgressBarService
+      .getProgressInfoData()
       .pipe(takeWhile(() => this.alive))
-      .subscribe((data) => {
+      .subscribe(data => {
         this.progressInfoData = data;
       });
   }

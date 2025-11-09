@@ -11,26 +11,29 @@ import { EntrepriseService } from '../../../services/entreprise.service';
 @Component({
   selector: 'ngx-add-direction',
   templateUrl: './add-direction.component.html',
-  styleUrls: ['./add-direction.component.scss']
+  styleUrls: ['./add-direction.component.scss'],
 })
 export class AddDirectionComponent implements OnInit {
-  direction:Direction=new Direction();
-  selectedEntrepriseId:number;
-  entreprises:Entreprise[];
-  constructor(private _router:Router,private dialogRef:MatDialogRef<AddDirectionComponent>,private serviceEntreprise:EntrepriseService,private serviceDirection:DirectionService) { }
+  direction: Direction = new Direction();
+  selectedEntrepriseId: number;
+  entreprises: Entreprise[];
+  constructor(
+    private _router: Router,
+    private dialogRef: MatDialogRef<AddDirectionComponent>,
+    private serviceEntreprise: EntrepriseService,
+    private serviceDirection: DirectionService,
+  ) {}
 
   ngOnInit(): void {
-    this.serviceEntreprise.getEntreprises().subscribe((data)=>this.entreprises=data);
-    //this.direction.budgetInitials=new BudgetInitial();
-    //this.direction.budgetRevise=new BudgetRevise();
+    this.serviceEntreprise.getEntreprises().subscribe(data => (this.entreprises = data));
+    // this.direction.budgetInitials=new BudgetInitial();
+    // this.direction.budgetRevise=new BudgetRevise();
   }
-  addDirection(){
-
-
-    this.serviceDirection.addDirection(this.direction,this.selectedEntrepriseId).subscribe(()=>{
+  addDirection() {
+    this.serviceDirection.addDirection(this.direction, this.selectedEntrepriseId).subscribe(() => {
       this.dialogRef.close();
-      this._router.navigateByUrl("/pages/direction").then(()=>window.location.reload());
+      this._router.navigateByUrl('/pages/direction').then(() => window.location.reload());
       console.log(this.direction);
-    })
+    });
   }
 }

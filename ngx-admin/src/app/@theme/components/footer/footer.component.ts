@@ -13,11 +13,7 @@ import { Component } from '@angular/core';
       <a href="#" target="_blank" class="ion ion-social-twitter"></a>
       <a href="#" target="_blank" class="ion ion-social-linkedin"></a>
     </div>
-    <img src= "../assets/images/Entreprise_tunisienne_d'activités_pétrolières_Logo.png"
-    width="40"
-     height="34"/>
-
+    <img src="../assets/images/Entreprise_tunisienne_d'activités_pétrolières_Logo.png" width="40" height="34" />
   `,
 })
-export class FooterComponent {
-}
+export class FooterComponent {}

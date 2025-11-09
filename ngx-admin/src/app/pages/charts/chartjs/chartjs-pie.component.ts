@@ -3,9 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-chartjs-pie',
-  template: `
-    <chart type="pie" [data]="data" [options]="options"></chart>
-  `,
+  template: ` <chart type="pie" [data]="data" [options]="options"></chart> `,
 })
 export class ChartjsPieComponent implements OnChanges, OnDestroy {
   @Input() budgetData: number[] = [];
@@ -45,12 +43,14 @@ export class ChartjsPieComponent implements OnChanges, OnDestroy {
   updateChartData(): void {
     this.data = {
       labels: ['budget', 'Label 2', 'Label 3'], // Update with your labels
-      datasets: [{
-        data: this.budgetData,
-        backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'], // Update with your colors
-        borderColor: ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'], // Update with your colors
-        borderWidth: 1,
-      }],
+      datasets: [
+        {
+          data: this.budgetData,
+          backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 99, 132, 0.2)'], // Update with your colors
+          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'], // Update with your colors
+          borderWidth: 1,
+        },
+      ],
     };
   }
 
