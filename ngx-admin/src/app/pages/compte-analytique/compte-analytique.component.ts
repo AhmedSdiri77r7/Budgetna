@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { NbDialogService, NbToastrService } from '@nebular/theme';
 
 import { DirectionService } from '../../services/direction.service';
 import { ExcelService } from '../../services/excel.service';
@@ -18,77 +19,250 @@ import { BudgetReviseComponent } from './budget-revise/budget-revise.component';
 })
 export class CompteAnalytiqueComponent implements OnInit {
   selectedDirection: number;
-  listdirections: Direction[];
-  search: string;
-  taux: string[] = [];
+  listdirections: Direction[] = [];
+  filteredDirections: Direction[] = [];
+  paginatedDirections: Direction[] = [];
+
+  search = '';
+  filterEntreprise = 'all';
+  filterBudget = 'all';
+
+  // Pagination
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 1;
+  Math = Math;
+
+  // Tri
+  sortColumn = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   direction: Direction;
+
   constructor(
     private _router: Router,
     private tokenStorage: TokenStorageService,
     private serviceDirection: DirectionService,
     private matDialog: MatDialog,
+    private dialogService: NbDialogService,
+    private toastrService: NbToastrService,
     private excelService: ExcelService,
   ) {}
 
   ngOnInit(): void {
-    this.serviceDirection.getDirections().subscribe(data => {
-      console.log(data);
-      data.forEach(element => {
-        if (element.budgetRevise == null) {
-          this.taux.push('-');
-        } else {
-          this.taux.push(element.budgetRevise.tauxBudget + '');
-        }
-
-        if (element.budgetInitial == null) {
-          this.taux.push('-');
-        } else {
-          this.taux.push(element.budgetInitial.tauxBudget + '');
-        }
-      });
-      console.log(this.taux);
-      this.listdirections = data;
-    });
+    this.loadDirections();
   }
 
-  onOpenDialogClick() {
-    this.matDialog.open(AddCompteAnalytiqueComponent);
-  }
-  onOpenDialogClick1() {
-    this.matDialog.open(BudgetReviseComponent);
-  }
-
-  deleteDirection(id: number) {
-    this.serviceDirection.deleteDirection(id).subscribe(
-      () => {
-        this.serviceDirection.getDirections().subscribe(data => {
-          this.listdirections = data;
-          console.log(data);
-        });
+  /**
+   * Charger toutes les directions
+   */
+  loadDirections(): void {
+    this.serviceDirection.getDirections().subscribe(
+      data => {
+        this.listdirections = data;
+        this.applyFilters();
       },
-      err => {
-        this._router.navigateByUrl('/auth');
-        this.tokenStorage.signOut();
+      error => {
+        console.error('Erreur lors du chargement des directions:', error);
+        this.toastrService.danger('Impossible de charger les directions', 'Erreur');
       },
     );
   }
-  searchfct() {
-    this.listdirections = this.listdirections.filter(res => {
-      if (res.name.toLocaleLowerCase().match(this.search.toLocaleLowerCase())) {
-        return true;
+
+  /**
+   * Appliquer les filtres
+   */
+  applyFilters(): void {
+    let filtered = [...this.listdirections];
+
+    // Filtre recherche
+    if (this.search) {
+      const searchLower = this.search.toLowerCase();
+      filtered = filtered.filter(
+        d =>
+          d.name?.toLowerCase().includes(searchLower) ||
+          d.entreprise?.name?.toLowerCase().includes(searchLower) ||
+          d.budgetInitial?.tauxBudget?.toString().includes(searchLower) ||
+          d.budgetRevise?.tauxBudget?.toString().includes(searchLower),
+      );
+    }
+
+    // Filtre entreprise
+    if (this.filterEntreprise && this.filterEntreprise !== 'all') {
+      filtered = filtered.filter(d => d.entreprise?.name === this.filterEntreprise);
+    }
+
+    // Filtre budget
+    if (this.filterBudget && this.filterBudget !== 'all') {
+      switch (this.filterBudget) {
+        case 'initial':
+          filtered = filtered.filter(d => d.budgetInitial != null);
+          break;
+        case 'revise':
+          filtered = filtered.filter(d => d.budgetRevise != null);
+          break;
+        case 'both':
+          filtered = filtered.filter(d => d.budgetInitial != null && d.budgetRevise != null);
+          break;
       }
-      if (res.budgetInitial.tauxBudget.toString().toLocaleLowerCase().match(this.search.toLocaleLowerCase())) {
-        return true;
+    }
+
+    this.filteredDirections = filtered;
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  /**
+   * Réinitialiser les filtres
+   */
+  resetFilters(): void {
+    this.search = '';
+    this.filterEntreprise = 'all';
+    this.filterBudget = 'all';
+    this.applyFilters();
+    this.toastrService.info('Filtres réinitialisés', 'Info');
+  }
+
+  /**
+   * Trier les données
+   */
+  sort(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredDirections.sort((a, b) => {
+      let valueA: any;
+      let valueB: any;
+
+      switch (column) {
+        case 'id':
+          valueA = a.id;
+          valueB = b.id;
+          break;
+        case 'name':
+          valueA = a.name?.toLowerCase() || '';
+          valueB = b.name?.toLowerCase() || '';
+          break;
+        case 'budgetInitial':
+          valueA = a.budgetInitial?.tauxBudget || 0;
+          valueB = b.budgetInitial?.tauxBudget || 0;
+          break;
+        case 'budgetRevise':
+          valueA = a.budgetRevise?.tauxBudget || 0;
+          valueB = b.budgetRevise?.tauxBudget || 0;
+          break;
+        default:
+          return 0;
       }
-      if (res.budgetRevise.tauxBudget.toString().toLocaleLowerCase().match(this.search.toLocaleLowerCase())) {
-        return true;
-      }
-      if (res.entreprise.name.toLocaleLowerCase().match(this.search.toLocaleLowerCase())) {
-        return true;
-      } else {
-        return false;
-      }
+
+      const comparison = valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
+      return this.sortDirection === 'asc' ? comparison : -comparison;
     });
+
+    this.updatePagination();
+  }
+
+  /**
+   * Obtenir l'icône de tri
+   */
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) {
+      return 'swap-outline';
+    }
+    return this.sortDirection === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline';
+  }
+
+  /**
+   * Mise à jour de la pagination
+   */
+  updatePagination(): void {
+    this.totalPages = Math.ceil(this.filteredDirections.length / this.pageSize);
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.paginatedDirections = this.filteredDirections.slice(start, end);
+  }
+
+  /**
+   * Page précédente
+   */
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.updatePagination();
+    }
+  }
+
+  /**
+   * Page suivante
+   */
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.updatePagination();
+    }
+  }
+
+  /**
+   * KPIs - Directions avec budget initial
+   */
+  getDirectionsWithBudgetInitial(): number {
+    return this.listdirections.filter(d => d.budgetInitial != null).length;
+  }
+
+  /**
+   * KPIs - Directions avec budget révisé
+   */
+  getDirectionsWithBudgetRevise(): number {
+    return this.listdirections.filter(d => d.budgetRevise != null).length;
+  }
+
+  /**
+   * KPIs - Budget total
+   */
+  getTotalBudget(): number {
+    return this.listdirections.reduce((sum, d) => {
+      const initial = d.budgetInitial?.tauxBudget || 0;
+      const revise = d.budgetRevise?.tauxBudget || 0;
+      return sum + Math.max(initial, revise);
+    }, 0);
+  }
+
+  /**
+   * Obtenir les entreprises uniques pour le filtre
+   */
+  getUniqueEntreprises(): string[] {
+    const entreprises = this.listdirections.map(d => d.entreprise?.name).filter(name => name != null);
+    return [...new Set(entreprises)];
+  }
+
+  /**
+   * Obtenir le statut d'une direction
+   */
+  getDirectionStatus(direction: Direction): string {
+    if (direction.budgetInitial && direction.budgetRevise) {
+      return 'Complet';
+    } else if (direction.budgetInitial || direction.budgetRevise) {
+      return 'Partiel';
+    } else {
+      return 'Aucun';
+    }
+  }
+
+  /**
+   * Obtenir le badge de statut
+   */
+  getDirectionStatusBadge(direction: Direction): string {
+    if (direction.budgetInitial && direction.budgetRevise) {
+      return 'success';
+    } else if (direction.budgetInitial || direction.budgetRevise) {
+      return 'warning';
+    } else {
+      return 'basic';
+    }
   }
 
   getBudgetInitialTaux(direction: Direction): string {
@@ -99,75 +273,87 @@ export class CompteAnalytiqueComponent implements OnInit {
     return direction?.budgetRevise?.tauxBudget?.toString() || '-';
   }
 
-  updateDirection(id: number) {
-    this.direction = this.serviceDirection.sendEventData(id);
-    this.matDialog.open(UpdateCompteAnalytiqueComponent);
-  }
-
-  onDirectionChange() {
-    // Vérifiez si une direction est sélectionnée
-    if (this.selectedDirection) {
-      // Recherchez la direction sélectionnée dans la liste des directions
-      const selectedDirection = this.listdirections.find(direction => direction.id === this.selectedDirection);
-
-      // Vérifiez si la direction sélectionnée a un budget initial défini
-      if (selectedDirection && selectedDirection.budgetInitial) {
-        // Affichez le budget initial de la direction sélectionnée
-        console.log('Budget initial de la direction sélectionnée :', selectedDirection.budgetInitial);
-      } else {
-        console.log('Aucun budget initial disponible pour la direction sélectionnée.');
-      }
-    }
-  }
-  exportAsXLSX(): void {
-    this.downloadFile(this.listdirections, 'test');
-  }
-  downloadFile(data, filename = 'data') {
-    let csvData = this.ConvertToCSV(data, ['id', 'name', 'budgetInitials', 'budgetRevise', 'entreprise']);
-
-    let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-    console.log(csvData);
-    let dwldLink = document.createElement('a');
-    let url = URL.createObjectURL(blob);
-    let isSafariBrowser = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
-    if (isSafariBrowser) {
-      //if Safari open in new window to save file with random filename.
-      dwldLink.setAttribute('target', '_blank');
-    }
-    dwldLink.setAttribute('href', url);
-    dwldLink.setAttribute('download', filename + '.csv');
-    dwldLink.style.visibility = 'hidden';
-    document.body.appendChild(dwldLink);
-    dwldLink.click();
-    document.body.removeChild(dwldLink);
-  }
-  ConvertToCSV(objArray, headerList) {
-    let str = '';
-    let header = headerList.join(',');
-    str += header + '\r\n';
-
-    for (let i = 0; i < objArray.length; i++) {
-      let line = [];
-      for (let key of headerList) {
-        if (key === 'budgetInitial' || key === 'budgetRevise') {
-          if (objArray[i][key]) {
-            // Si la clé est 'budgetInitial' ou 'budgetRevise', extrayez les propriétés pertinentes.
-            line.push(objArray[i][key].id || 'null');
-            line.push(objArray[i][key].name || 'null');
-            line.push(objArray[i][key].description || 'null');
-            line.push(objArray[i][key].tauxBudget || 'null');
-          } else {
-            // Si la clé n'existe pas, ajoutez des valeurs 'null'.
-            line.push('null', 'null', 'null', 'null');
-          }
-        } else {
-          // Pour d'autres clés, ajoutez simplement la valeur.
-          line.push(objArray[i][key]);
+  /**
+   * Ouvrir le dialog d'affectation de budget
+   */
+  onOpenDialogClick(): void {
+    this.matDialog
+      .open(AddCompteAnalytiqueComponent, {
+        width: '600px',
+      })
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadDirections();
         }
-      }
-      str += line.join(',') + '\r\n';
-    }
+      });
+  }
 
-    return str;
+  /**
+   * Ouvrir le dialog d'ajout de budget révisé
+   */
+  onOpenDialogClick1(): void {
+    this.matDialog
+      .open(BudgetReviseComponent, {
+        width: '600px',
+      })
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadDirections();
+        }
+      });
+  }
+
+  /**
+   * Mettre à jour une direction
+   */
+  updateDirection(id: number): void {
+    this.direction = this.serviceDirection.sendEventData(id);
+    this.matDialog
+      .open(UpdateCompteAnalytiqueComponent, {
+        width: '600px',
+      })
+      .afterClosed()
+      .subscribe(result => {
+        if (result) {
+          this.loadDirections();
+        }
+      });
+  }
+
+  /**
+   * Voir les détails
+   */
+  viewDetails(direction: Direction): void {
+    const message = `
+      <strong>Direction:</strong> ${direction.name}<br>
+      <strong>Entreprise:</strong> ${direction.entreprise?.name || '-'}<br>
+      <strong>Budget Initial:</strong> ${this.getBudgetInitialTaux(direction)} €<br>
+      <strong>Budget Révisé:</strong> ${this.getBudgetReviseTaux(direction)} €<br>
+      <strong>Statut:</strong> ${this.getDirectionStatus(direction)}
+    `;
+
+    this.toastrService.info(message, `Détails - ${direction.name}`, {
+      duration: 5000,
+      hasIcon: true,
+    });
+  }
+
+  /**
+   * Exporter vers Excel
+   */
+  exportAsXLSX(): void {
+    const data = this.filteredDirections.map(d => ({
+      ID: d.id,
+      Direction: d.name,
+      Entreprise: d.entreprise?.name || '-',
+      'Budget Initial': this.getBudgetInitialTaux(d),
+      'Budget Révisé': this.getBudgetReviseTaux(d),
+      Statut: this.getDirectionStatus(d),
+    }));
+
+    this.excelService.exportAsExcelFile(data, 'comptes_analytiques');
+    this.toastrService.success('Export Excel réussi', 'Succès');
   }
 }

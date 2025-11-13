@@ -34,6 +34,9 @@ import {
   NbSpinnerModule,
   NbTooltipModule,
   NbDialogModule,
+  NbSelectModule,
+  NbBadgeModule,
+  NbUserModule,
 } from '@nebular/theme';
 
 @NgModule({
@@ -47,13 +50,16 @@ import {
     MatDialogModule,
     FormsModule,
     ChartModule,
-    NbCardModule, // <- ajouté
-    NbButtonModule, // <- ajouté
-    NbIconModule, // <- ajouté
-    NbInputModule, // <- ajouté
-    NbSpinnerModule, // <- ajouté
-    NbTooltipModule, // <- ajouté
-    NbDialogModule.forChild(), // <- nécessaire si tu ouvres des dialogs depuis ce module
+    NbCardModule,
+    NbButtonModule,
+    NbIconModule,
+    NbInputModule,
+    NbSpinnerModule,
+    NbTooltipModule,
+    NbDialogModule.forChild(),
+    NbSelectModule,
+    NbBadgeModule,
+    NbUserModule,
   ],
   declarations: [
     PagesComponent,

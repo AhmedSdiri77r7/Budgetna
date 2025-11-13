@@ -1,0 +1,95 @@
+<nb-card>
+  <nb-card-header>
+    <h5 *ngIf="!confirmDelete">Détails du Budget</h5>
+    <h5 *ngIf="confirmDelete">Confirmer la suppression</h5>
+  </nb-card-header>
+
+  <nb-card-body>
+    <div *ngIf="!confirmDelete" class="budget-details">
+      <div class="detail-section">
+        <h6>Informations Générales</h6>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Libellé:</span>
+            <span class="value">{{ budget?.budgetPK?.libelle || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">ID Budget Initial:</span>
+            <span class="value">{{ budget?.budgetPK?.idBudgetInitial || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">ID Employé:</span>
+            <span class="value">{{ budget?.employe || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Statut:</span>
+            <nb-badge
+              [status]="budget?.iSvalide ? 'success' : 'warning'"
+              [text]="budget?.iSvalide ? 'Validé' : 'En attente'"
+            ></nb-badge>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <h6>Période</h6>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Date Début:</span>
+            <span class="value">{{ budget?.budgetPK?.dateDebut | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Date Fin:</span>
+            <span class="value">{{ budget?.budgetPK?.dateFin | date: 'dd/MM/yyyy' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section" *ngIf="budget?.budgetInitial">
+        <h6>Budget Initial</h6>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Nom:</span>
+            <span class="value">{{ budget.budgetInitial.name }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Taux Budget:</span>
+            <span class="value highlight">{{ budget.budgetInitial.tauxBudget }}%</span>
+          </div>
+          <div class="detail-item full-width" *ngIf="budget.budgetInitial.description">
+            <span class="label">Description:</span>
+            <span class="value">{{ budget.budgetInitial.description }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section" *ngIf="budget?.employe">
+        <h6>Employé</h6>
+        <div class="employee-info">
+          <p>ID Employé: {{ budget.employe }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="confirmDelete" class="confirm-delete">
+      <nb-icon icon="alert-triangle-outline" status="danger"></nb-icon>
+      <p>Êtes-vous sûr de vouloir supprimer ce budget ?</p>
+      <p class="budget-info">
+        <strong>{{ budget?.budgetPK?.libelle }}</strong>
+      </p>
+      <p class="warning">Cette action est irréversible.</p>
+    </div>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <div class="dialog-actions">
+      <button nbButton status="basic" (click)="close()">
+        {{ confirmDelete ? 'Annuler' : 'Fermer' }}
+      </button>
+      <button *ngIf="confirmDelete" nbButton status="danger" (click)="confirm()">
+        <nb-icon icon="trash-2-outline"></nb-icon>
+        Supprimer
+      </button>
+    </div>
+  </nb-card-footer>
+</nb-card>

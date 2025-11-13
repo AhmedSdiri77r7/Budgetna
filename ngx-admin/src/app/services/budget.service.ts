@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { EventEmitter, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
@@ -8,6 +8,7 @@ import { BudgetInitial } from '../model/budgetInitial';
 import { TokenStorageService } from './token-storage.service';
 import { catchError, take, tap } from 'rxjs/operators';
 import { BudgetRevise } from '../model/budgetRevise';
+import { BudgetStateService } from './budget-state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,19 +24,36 @@ export class BudgetService {
     private tokenStorage: TokenStorageService,
     private http: HttpClient,
     private tokenservice: TokenStorageService,
+    private budgetState: BudgetStateService,
   ) {}
 
   getBudgets(): Observable<Budget[]> {
     let token = this.tokenStorage.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<Budget[]>(`${this.apiServerUrl}/budgets`, { headers });
+    return this.http.get<Budget[]>(`${this.apiServerUrl}/budgets`, { headers }).pipe(
+      tap(budgets => {
+        this.budgetState.updateBudgets(budgets);
+      }),
+      catchError(this.handleError.bind(this)),
+    );
   }
 
   public getBudgetInitial(): Observable<BudgetInitial[]> {
-    return this.http.get<BudgetInitial[]>(`${this.apiServerUrl}/getBudgetInitial`);
+    return this.http.get<BudgetInitial[]>(`${this.apiServerUrl}/getBudgetInitial`).pipe(
+      tap(budgets => {
+        this.budgetState.setBudgetInitiaux(budgets);
+      }),
+      catchError(this.handleError.bind(this)),
+    );
   }
+
   public getBudgetRevise(): Observable<BudgetRevise[]> {
-    return this.http.get<BudgetRevise[]>(`${this.apiServerUrl}/getBudgetRevise`);
+    return this.http.get<BudgetRevise[]>(`${this.apiServerUrl}/getBudgetRevise`).pipe(
+      tap(budgets => {
+        this.budgetState.setBudgetRevises(budgets);
+      }),
+      catchError(this.handleError.bind(this)),
+    );
   }
   public ajouterBudgetInitial(budgetInitial: BudgetInitial): Observable<BudgetInitial> {
     return this.http.post<BudgetInitial>(this.apiServerUrl + '/ajouterBudgetInitial', budgetInitial);
@@ -122,7 +140,9 @@ export class BudgetService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`).set('Content-Type', 'application/json');
 
     // Correction de l'ordre des paramètres : Valide avant les dates pour correspondre au backend
-    const url = `${this.apiServerUrl}/validerBudget/${idBudgetInitial}/${idEmploye}/${encodeURIComponent(libelle)}/${Valide}/${dateDebut}/${dateFin}`;
+    const url =
+      `${this.apiServerUrl}/validerBudget/${idBudgetInitial}/${idEmploye}/` +
+      `${encodeURIComponent(libelle)}/${Valide}/${dateDebut}/${dateFin}`;
 
     return this.http.put<void>(url, null, { headers }).pipe(
       catchError(error => {
@@ -144,17 +164,18 @@ export class BudgetService {
     dateFin: Date,
   ): Observable<void> {
     let token = this.tokenStorage.getToken();
-    console.log(token);
     const httph = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    const url = `${this.apiServerUrl}/ajouterBudget/${idBudgetInitial}/${idEmploye}/${encodeURIComponent(libelle)}/${this.formatDate(dateDebut)}/${this.formatDate(dateFin)}/${token}`;
+    const url =
+      `${this.apiServerUrl}/ajouterBudget/${idBudgetInitial}/${idEmploye}/` +
+      `${encodeURIComponent(libelle)}/${this.formatDate(dateDebut)}/` +
+      `${this.formatDate(dateFin)}/${token}`;
 
     return this.http.post<void>(url, null, { headers: httph });
   }
   getBd() {
     let token = this.tokenStorage.getToken();
-    console.log(token);
     const httph = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get(this.apiServerUrl + '/bd/' + token);
+    return this.http.get(this.apiServerUrl + '/bd/' + token, { headers: httph });
   }
 
   private formatDate(date: Date): string {
@@ -175,8 +196,8 @@ export class BudgetService {
       .set('dateF', dateF);
 
     return this.http.get<Budget[]>(url, { params }).pipe(
-      tap(budgets => {
-        console.log('Budgets:', budgets); // Vérifier les données retournées
+      tap(() => {
+        // Budgets récupérés avec succès
       }),
     );
   }
@@ -184,6 +205,25 @@ export class BudgetService {
   deleteBudget(budgetId: string): Observable<void> {
     let token = this.tokenStorage.getToken();
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.delete<void>(`${this.apiServerUrl}/deleteBudget/${budgetId}`, { headers });
+    return this.http.delete<void>(`${this.apiServerUrl}/deleteBudget/${budgetId}`, { headers }).pipe(
+      tap(() => {
+        this.budgetState.removeBudget(budgetId);
+      }),
+      catchError(this.handleError.bind(this)),
+    );
+  }
+
+  /**
+   * Gestion centralisée des erreurs
+   */
+  private handleError(error: any): Observable<never> {
+    console.error('Erreur dans BudgetService:', error);
+
+    if (error.status === 401) {
+      this.tokenStorage.signOut();
+      this._router.navigateByUrl('/auth');
+    }
+
+    return throwError(() => error);
   }
 }

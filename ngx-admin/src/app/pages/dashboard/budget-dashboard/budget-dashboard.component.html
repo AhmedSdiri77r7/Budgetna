@@ -1,0 +1,169 @@
+<div class="budget-dashboard">
+  <!-- Header avec actions -->
+  <div class="dashboard-header">
+    <h3>Tableau de Bord Budgétaire</h3>
+    <button nbButton status="primary" size="small" (click)="refreshData()">
+      <nb-icon icon="refresh-outline"></nb-icon>
+      Actualiser
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  <nb-card *ngIf="isLoading" class="loading-card">
+    <nb-card-body>
+      <div class="text-center">
+        <nb-spinner status="primary"></nb-spinner>
+        <p class="mt-3">Chargement des données...</p>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- KPIs Cards -->
+  <div class="kpi-grid" *ngIf="!isLoading">
+    <!-- Total Budgets -->
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-icon primary">
+          <nb-icon icon="file-text-outline"></nb-icon>
+        </div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">Total Budgets</h6>
+          <h2 class="kpi-value">{{ kpis.totalBudgets }}</h2>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Budgets Validés -->
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-icon success">
+          <nb-icon icon="checkmark-circle-outline"></nb-icon>
+        </div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">Budgets Validés</h6>
+          <h2 class="kpi-value">{{ kpis.budgetsValides }}</h2>
+          <p class="kpi-subtitle">{{ kpis.tauxValidation }}% du total</p>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Budgets En Attente -->
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-icon warning">
+          <nb-icon icon="clock-outline"></nb-icon>
+        </div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">En Attente</h6>
+          <h2 class="kpi-value">{{ kpis.budgetsEnAttente }}</h2>
+          <p class="kpi-subtitle">Nécessitent validation</p>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Taux de Validation -->
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-icon info">
+          <nb-icon icon="pie-chart-outline"></nb-icon>
+        </div>
+        <div class="kpi-content">
+          <h6 class="kpi-label">Taux de Validation</h6>
+          <h2 class="kpi-value">{{ kpis.tauxValidation }}%</h2>
+          <nb-progress-bar [value]="kpis.tauxValidation" status="success"></nb-progress-bar>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="charts-row" *ngIf="!isLoading">
+    <!-- Status Distribution Chart -->
+    <nb-card class="chart-card">
+      <nb-card-header> Répartition par Statut </nb-card-header>
+      <nb-card-body>
+        <ngx-charts-pie-chart
+          *ngIf="statusChartData.length > 0"
+          [results]="statusChartData"
+          [scheme]="chartColorScheme"
+          [labels]="true"
+          [doughnut]="true"
+          [legend]="true"
+          [legendPosition]="'below'"
+        >
+        </ngx-charts-pie-chart>
+        <div *ngIf="statusChartData.length === 0" class="no-data">
+          <p>Aucune donnée disponible</p>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Monthly Trend Chart -->
+    <nb-card class="chart-card">
+      <nb-card-header> Évolution Mensuelle </nb-card-header>
+      <nb-card-body>
+        <ngx-charts-bar-vertical
+          *ngIf="chartData.length > 0"
+          [results]="chartData"
+          [scheme]="chartColorScheme"
+          [xAxis]="true"
+          [yAxis]="true"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="true"
+          [xAxisLabel]="'Mois'"
+          [yAxisLabel]="'Nombre de budgets'"
+        >
+        </ngx-charts-bar-vertical>
+        <div *ngIf="chartData.length === 0" class="no-data">
+          <p>Aucune donnée disponible</p>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Tendances -->
+  <div class="tendances-row" *ngIf="!isLoading">
+    <nb-card>
+      <nb-card-header> Tendances Récentes </nb-card-header>
+      <nb-card-body>
+        <div class="tendance-grid">
+          <div class="tendance-item" *ngFor="let tendance of kpis.budgetsTendance">
+            <div class="tendance-label">{{ tendance.label }}</div>
+            <div class="tendance-value">{{ tendance.value }}</div>
+            <div
+              class="tendance-evolution"
+              [class.positive]="tendance.evolution > 0"
+              [class.negative]="tendance.evolution < 0"
+            >
+              <nb-icon [icon]="tendance.evolution > 0 ? 'trending-up-outline' : 'trending-down-outline'"></nb-icon>
+              {{ tendance.evolution > 0 ? '+' : '' }}{{ tendance.evolution }}%
+            </div>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Actions rapides -->
+  <div class="quick-actions" *ngIf="!isLoading">
+    <nb-card>
+      <nb-card-header> Actions Rapides </nb-card-header>
+      <nb-card-body>
+        <div class="actions-grid">
+          <button nbButton status="primary" [routerLink]="['/pages/layout/accordion']">
+            <nb-icon icon="plus-outline"></nb-icon>
+            Nouveau Budget
+          </button>
+          <button nbButton status="info" [routerLink]="['/pages/compte-analytique']">
+            <nb-icon icon="list-outline"></nb-icon>
+            Voir les Directions
+          </button>
+          <button nbButton status="success" [routerLink]="['/pages/layout/accordion']">
+            <nb-icon icon="checkmark-square-outline"></nb-icon>
+            Valider les Budgets
+          </button>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

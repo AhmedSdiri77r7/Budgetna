@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { NbDialogRef } from '@nebular/theme';
 import { Router } from '@angular/router';
 import { Entreprise } from '../../../model/entreprise';
 import { EntrepriseService } from '../../../services/entreprise.service';
 import { TokenStorageService } from '../../../services/token-storage.service';
+
 @Component({
   selector: 'ngx-update-entreprise',
   templateUrl: './update-entreprise.component.html',
@@ -14,7 +15,7 @@ export class UpdateEntrepriseComponent implements OnInit {
   constructor(
     private _router: Router,
     private tokenStorage: TokenStorageService,
-    private dialogRef: MatDialogRef<UpdateEntrepriseComponent>,
+    private dialogRef: NbDialogRef<UpdateEntrepriseComponent>,
     private entrepriseService: EntrepriseService,
   ) {}
 
@@ -22,26 +23,27 @@ export class UpdateEntrepriseComponent implements OnInit {
     this.entrepriseService.$eventEmit.subscribe(
       data => {
         this.entreprise = data;
-        console.log(this.entreprise);
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
   }
-  updateEntreprise() {
+
+  updateEntreprise(): void {
     this.entrepriseService.addEntreprise(this.entreprise).subscribe(
       () => {
         this.dialogRef.close();
-        this._router.navigateByUrl('/pages/entreprise', { skipLocationChange: true }).then(() => {
-          this._router.navigate(['/pages/entreprise']);
-        });
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
   }
 }

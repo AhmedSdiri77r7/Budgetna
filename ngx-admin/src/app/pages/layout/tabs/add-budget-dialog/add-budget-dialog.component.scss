@@ -1,0 +1,39 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  nb-card {
+    margin: 0;
+    max-width: 600px;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+
+    .label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: nb-theme(text-basic-color);
+
+      .required {
+        color: nb-theme(color-danger-500);
+      }
+    }
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}

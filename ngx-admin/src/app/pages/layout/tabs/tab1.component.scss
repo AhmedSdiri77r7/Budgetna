@@ -1,144 +1,233 @@
-/* Add this to your existing CSS */
-/* tab1.component.scss */
+@import '../../../@theme/styles/themes';
 
-/* Container */
-.container {
-  margin: 10px;
-}
+@include nb-install-component() {
+  // KPI Grid
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 
-/* Labels */
-label {
-  font-weight: bold;
-}
+    @media (max-width: 768px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
 
-/* Input fields */
-input {
-  width: 100%;
-  padding: 5px;
-  margin-bottom: 10px;
-}
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr;
+    }
 
-/* Button */
-button {
-  background-color: #007bff;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
-  cursor: pointer;
-}
+    .kpi-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
 
-/* Headings */
-h2 {
-  color: #0000ff;
-}
+      nb-icon {
+        font-size: 2.5rem;
+      }
 
-h3 {
-  color: #0000ff;
-}
+      .kpi-info {
+        display: flex;
+        flex-direction: column;
 
-/* Paragraphs */
-p {
-  color: #0000ff;
-}
+        .kpi-value {
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: nb-theme(text-basic-color);
+          line-height: 1.2;
+        }
 
-/* Form styles */
-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 300px;
-  margin: 0 auto;
+        .kpi-label {
+          font-size: 0.875rem;
+          color: nb-theme(text-hint-color);
+          margin-top: 0.25rem;
+        }
+      }
+    }
+  }
 
-  /* Form div styles */
-  div {
+  // Search & Actions
+  .search-actions {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
 
-    /* Label styles */
-    label {
-      font-weight: bold;
-      margin-bottom: 6px;
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
     }
 
-    /* Input styles */
-    input[type='number'],
-    input[type='text'],
-    input[type='date'] {
-      padding: 8px;
-      margin: 2px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
+    .search-container {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-width: 250px;
+
+      @media (max-width: 768px) {
+        min-width: 100%;
+      }
+
+      nb-icon {
+        position: absolute;
+        left: 1rem;
+        color: nb-theme(text-hint-color);
+        z-index: 2;
+      }
+
+      input {
+        padding-left: 3rem;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+
+      @media (max-width: 768px) {
+        width: 100%;
+
+        button {
+          flex: 1;
+        }
+      }
     }
   }
 
-  /* Submit button styles */
-  button[type='submit'] {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 12px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition:
-      background 0.2s,
-      color 0.2s;
+  // Budget List
+  .budget-list {
+    display: grid;
+    gap: 1rem;
+
+    .budget-card {
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: nb-theme(shadow);
+      }
+
+      .budget-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+
+        .budget-info {
+          flex: 1;
+
+          h6 {
+            margin: 0 0 0.5rem 0;
+            color: nb-theme(text-basic-color);
+            font-weight: 600;
+            font-size: 1.125rem;
+          }
+
+          .budget-meta {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: nb-theme(text-hint-color);
+            font-size: 0.875rem;
+
+            nb-icon {
+              font-size: 1rem;
+            }
+          }
+        }
+
+        .budget-status {
+          flex-shrink: 0;
+        }
+      }
+
+      .budget-details {
+        display: grid;
+        gap: 1rem;
+
+        .detail-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem;
+          background: nb-theme(background-basic-color-2);
+          border-radius: nb-theme(radius);
+          gap: 1rem;
+
+          @media (max-width: 576px) {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+
+          .label {
+            font-weight: 500;
+            color: nb-theme(text-hint-color);
+            font-size: 0.875rem;
+          }
+
+          .value {
+            color: nb-theme(text-basic-color);
+            font-weight: 500;
+
+            &.highlight {
+              color: nb-theme(color-primary-500);
+              font-weight: 700;
+              font-size: 1.125rem;
+            }
+
+            &.description {
+              text-align: right;
+              max-width: 70%;
+
+              @media (max-width: 576px) {
+                text-align: left;
+                max-width: 100%;
+              }
+            }
+          }
+        }
+      }
+
+      .budget-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+
+        @media (max-width: 576px) {
+          button {
+            flex: 1;
+          }
+        }
+      }
+    }
   }
 
-  button[type='submit']:hover {
-    background: #0056b3;
+  // Empty State
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+
+    nb-icon {
+      font-size: 5rem;
+      margin-bottom: 1.5rem;
+      color: nb-theme(text-hint-color);
+    }
+
+    h5 {
+      margin-bottom: 0.5rem;
+      color: nb-theme(text-basic-color);
+    }
+
+    p {
+      color: nb-theme(text-hint-color);
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      margin-top: 1rem;
+    }
   }
-}
-.form-container {
-  background-color: #fff; /* Change to the background color you prefer */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-}
-/* Table styles */
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 12px;
-  text-align: left;
-}
-
-th {
-  background-color: #007bff;
-  color: #fff;
-}
-
-/* Alternate row colors for better readability */
-tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-/* Hover effect on rows */
-tr:hover {
-  background-color: #f0f0f0;
-}
-
-/* Styling for the "Details" button */
-.btn-details {
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-details:hover {
-  background-color: #0056b3;
 }

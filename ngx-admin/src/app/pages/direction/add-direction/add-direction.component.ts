@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { NbDialogRef } from '@nebular/theme';
 import { Router } from '@angular/router';
-import { BudgetInitial } from '../../../model/budgetInitial';
-import { BudgetRevise } from '../../../model/budgetRevise';
 import { Direction } from '../../../model/direction';
 import { Entreprise } from '../../../model/entreprise';
 import { DirectionService } from '../../../services/direction.service';
@@ -17,23 +15,25 @@ export class AddDirectionComponent implements OnInit {
   direction: Direction = new Direction();
   selectedEntrepriseId: number;
   entreprises: Entreprise[];
+
   constructor(
     private _router: Router,
-    private dialogRef: MatDialogRef<AddDirectionComponent>,
+    private dialogRef: NbDialogRef<AddDirectionComponent>,
     private serviceEntreprise: EntrepriseService,
     private serviceDirection: DirectionService,
   ) {}
 
   ngOnInit(): void {
     this.serviceEntreprise.getEntreprises().subscribe(data => (this.entreprises = data));
-    // this.direction.budgetInitials=new BudgetInitial();
-    // this.direction.budgetRevise=new BudgetRevise();
   }
-  addDirection() {
+
+  addDirection(): void {
     this.serviceDirection.addDirection(this.direction, this.selectedEntrepriseId).subscribe(() => {
       this.dialogRef.close();
-      this._router.navigateByUrl('/pages/direction').then(() => window.location.reload());
-      console.log(this.direction);
     });
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
   }
 }

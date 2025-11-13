@@ -1,44 +1,30 @@
-form {
-  display: flex;
-  flex-direction: column;
-  max-width: 300px;
-  margin: 0 auto;
+@import '../../../@theme/styles/themes';
 
-  div {
+@include nb-install-component() {
+  .header-container {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 
-    label {
-      font-weight: bold;
-      margin-bottom: 6px;
+    h4 {
+      margin: 0;
+      color: nb-theme(text-basic-color);
     }
 
-    input[type='number'],
-    input[type='text'],
-    input[type='date'] {
-      padding: 8px;
-      margin: 2px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
+    .subtitle {
+      margin: 0;
+      color: nb-theme(text-hint-color);
+      font-size: 0.875rem;
     }
   }
 
-  button[type='submit'] {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 12px 20px;
-    cursor: pointer;
-    font-weight: bold;
-    transition:
-      background 0.2s,
-      color 0.2s;
-  }
-
-  button[type='submit']:hover {
-    background: #0056b3;
+  ::ng-deep {
+    .nb-tabset {
+      nb-tab {
+        padding: 1.5rem 0;
+      }
+    }
   }
 }

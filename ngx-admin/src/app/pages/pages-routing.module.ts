@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { PagesComponent } from './pages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { BudgetDashboardComponent } from './dashboard/budget-dashboard/budget-dashboard.component';
 import { ECommerceComponent } from './e-commerce/e-commerce.component';
 import { NotFoundComponent } from './miscellaneous/not-found/not-found.component';
 import { EntrepriseComponent } from './entreprise/entreprise.component';
@@ -40,9 +41,10 @@ const routes: Routes = [
         path: 'contrat',
         component: ContratComponent,
       },
+
       {
-        path: 'iot-dashboard',
-        component: DashboardComponent,
+        path: 'budget-dashboard',
+        component: BudgetDashboardComponent,
       },
       {
         path: 'layout',

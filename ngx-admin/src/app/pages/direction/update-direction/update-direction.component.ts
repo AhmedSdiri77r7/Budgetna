@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { NbDialogRef } from '@nebular/theme';
 import { Router } from '@angular/router';
-import { BudgetInitial } from '../../../model/budgetInitial';
-import { BudgetRevise } from '../../../model/budgetRevise';
 import { Direction } from '../../../model/direction';
 import { Entreprise } from '../../../model/entreprise';
 import { DirectionService } from '../../../services/direction.service';
@@ -18,10 +16,11 @@ export class UpdateDirectionComponent implements OnInit {
   direction: Direction = new Direction();
   selectedEntrepriseId: number;
   entreprises: Entreprise[];
+
   constructor(
     private _router: Router,
     private tokenStorage: TokenStorageService,
-    private dialogRef: MatDialogRef<UpdateDirectionComponent>,
+    private dialogRef: NbDialogRef<UpdateDirectionComponent>,
     private serviceEntreprise: EntrepriseService,
     private serviceDirection: DirectionService,
   ) {}
@@ -29,39 +28,38 @@ export class UpdateDirectionComponent implements OnInit {
   ngOnInit(): void {
     this.serviceEntreprise.getEntreprises().subscribe(
       data => (this.entreprises = data),
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
     this.serviceDirection.$eventEmit.subscribe(
       data => {
-        console.log(this.direction);
         this.direction = data;
-
         if (data.entreprise != null) {
           this.selectedEntrepriseId = data.entreprise.id;
         }
-
-        console.log(this.direction);
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
   }
-  addDirection() {
+
+  addDirection(): void {
     this.serviceDirection.addDirection(this.direction, this.selectedEntrepriseId).subscribe(
       () => {
         this.dialogRef.close();
-        this._router.navigateByUrl('/pages/direction').then(() => window.location.reload());
-        console.log(this.direction);
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
+  }
+
+  cancel(): void {
+    this.dialogRef.close();
   }
 }

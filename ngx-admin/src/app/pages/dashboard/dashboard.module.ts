@@ -9,8 +9,11 @@ import {
   NbSelectModule,
   NbListModule,
   NbIconModule,
+  NbProgressBarModule,
+  NbSpinnerModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ThemeModule } from '../../@theme/theme.module';
 import { DashboardComponent } from './dashboard.component';
 import { StatusCardComponent } from './status-card/status-card.component';
@@ -28,6 +31,7 @@ import { SolarComponent } from './solar/solar.component';
 import { PlayerComponent } from './rooms/player/player.component';
 import { TrafficComponent } from './traffic/traffic.component';
 import { TrafficChartComponent } from './traffic/traffic-chart.component';
+import { BudgetDashboardComponent } from './budget-dashboard/budget-dashboard.component';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -44,7 +48,10 @@ import { FormsModule } from '@angular/forms';
     NbListModule,
     NbIconModule,
     NbButtonModule,
+    NbProgressBarModule,
+    NbSpinnerModule,
     NgxEchartsModule,
+    NgxChartsModule,
   ],
   declarations: [
     DashboardComponent,
@@ -63,6 +70,7 @@ import { FormsModule } from '@angular/forms';
     SolarComponent,
     TrafficComponent,
     TrafficChartComponent,
+    BudgetDashboardComponent,
   ],
 })
 export class DashboardModule {}

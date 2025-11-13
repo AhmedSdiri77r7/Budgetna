@@ -38,9 +38,10 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
     home: true,
   },
   {
-    title: 'IoT Dashboard',
+    title: 'Dashboard',
     icon: 'activity-outline',
-    link: '/pages/iot-dashboard',
+    link: '/pages/budget-dashboard',
+    home: true,
   },
   {
     title: 'FEATURES',
@@ -70,6 +71,10 @@ export const MENU_ITEMS_ADMIN: NbMenuItem[] = [
         title: 'Budget',
         pathMatch: 'prefix',
         link: '/pages/layout/tabs',
+      },
+      {
+        title: 'Historique des Budgets',
+        link: '/pages/layout/budget-history',
       },
     ],
   },

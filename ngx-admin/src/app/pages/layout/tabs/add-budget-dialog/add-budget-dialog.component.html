@@ -1,0 +1,61 @@
+<nb-card>
+  <nb-card-header>
+    <h5>{{ isEdit ? 'Modifier' : 'Ajouter' }} un Budget d'Investissement</h5>
+  </nb-card-header>
+
+  <nb-card-body>
+    <form #budgetForm="ngForm">
+      <div class="form-group">
+        <label for="idBudgetInitial" class="label">Budget Initial <span class="required">*</span></label>
+        <nb-select
+          id="idBudgetInitial"
+          fullWidth
+          placeholder="Sélectionner un budget initial"
+          [(ngModel)]="idBudgetInitial"
+          name="idBudgetInitial"
+          required
+        >
+          <nb-option *ngFor="let budget of budgetInitiaux" [value]="budget.id">
+            {{ budget.name }} - {{ budget.tauxBudget }}%
+          </nb-option>
+        </nb-select>
+      </div>
+
+      <div class="form-group">
+        <label for="libelle" class="label">Libellé <span class="required">*</span></label>
+        <input
+          nbInput
+          fullWidth
+          type="text"
+          id="libelle"
+          placeholder="Entrer le libellé du budget"
+          [(ngModel)]="libelle"
+          name="libelle"
+          required
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="dateDebut" class="label">Date Début <span class="required">*</span></label>
+          <input nbInput fullWidth type="date" id="dateDebut" [(ngModel)]="dateDebut" name="dateDebut" required />
+        </div>
+
+        <div class="form-group">
+          <label for="dateFin" class="label">Date Fin <span class="required">*</span></label>
+          <input nbInput fullWidth type="date" id="dateFin" [(ngModel)]="dateFin" name="dateFin" required />
+        </div>
+      </div>
+    </form>
+  </nb-card-body>
+
+  <nb-card-footer>
+    <div class="dialog-actions">
+      <button nbButton status="basic" (click)="cancel()">Annuler</button>
+      <button nbButton status="success" [disabled]="!isFormValid()" (click)="onSubmit()">
+        <nb-icon icon="checkmark-outline"></nb-icon>
+        {{ isEdit ? 'Modifier' : 'Ajouter' }}
+      </button>
+    </div>
+  </nb-card-footer>
+</nb-card>

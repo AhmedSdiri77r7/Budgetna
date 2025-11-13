@@ -322,7 +322,7 @@ export class BudgetDetailsComponent implements OnInit {
               this.toastrService.success('Budget créé avec succès', 'Succès');
               this.dialogRef.close(true);
             },
-            error => {
+            _error => {
               this.loading = false;
               this.toastrService.danger('Erreur lors de la création du budget', 'Erreur');
             },

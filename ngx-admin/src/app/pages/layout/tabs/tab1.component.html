@@ -1,0 +1,156 @@
+<!-- KPI Cards -->
+<div class="kpi-grid">
+  <nb-card size="tiny" status="primary">
+    <nb-card-body>
+      <div class="kpi-content">
+        <nb-icon icon="briefcase-outline" status="primary"></nb-icon>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ getTotalBudgets() }}</span>
+          <span class="kpi-label">Total Budgets</span>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <nb-card size="tiny" status="success">
+    <nb-card-body>
+      <div class="kpi-content">
+        <nb-icon icon="checkmark-circle-outline" status="success"></nb-icon>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ getValidatedBudgets() }}</span>
+          <span class="kpi-label">Validés</span>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <nb-card size="tiny" status="warning">
+    <nb-card-body>
+      <div class="kpi-content">
+        <nb-icon icon="clock-outline" status="warning"></nb-icon>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ getPendingBudgets() }}</span>
+          <span class="kpi-label">En attente</span>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <nb-card size="tiny" status="info">
+    <nb-card-body>
+      <div class="kpi-content">
+        <nb-icon icon="percent-outline" status="info"></nb-icon>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ getAverageTaux() }}%</span>
+          <span class="kpi-label">Taux Moyen</span>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</div>
+
+<!-- Search & Actions -->
+<nb-card>
+  <nb-card-body>
+    <div class="search-actions">
+      <div class="search-container">
+        <nb-icon icon="search-outline" pack="eva"></nb-icon>
+        <input
+          nbInput
+          fullWidth
+          type="text"
+          placeholder="Rechercher par libellé, employé..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applySearch()"
+        />
+      </div>
+      <div class="action-buttons">
+        <button nbButton status="success" (click)="openAddBudgetDialog()">
+          <nb-icon icon="plus-outline"></nb-icon>
+          Ajouter Budget
+        </button>
+        <button nbButton status="info" outline (click)="exportAsXLSX()">
+          <nb-icon icon="download-outline"></nb-icon>
+          Exporter Excel
+        </button>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+<!-- Budget List -->
+<div class="budget-list" *ngIf="filteredBudgets && filteredBudgets.length > 0; else emptyState">
+  <nb-card *ngFor="let budget of filteredBudgets" class="budget-card">
+    <nb-card-header>
+      <div class="budget-header">
+        <div class="budget-info">
+          <h6>{{ budget.budgetPK?.libelle || 'Sans libellé' }}</h6>
+          <p class="budget-meta">
+            <nb-icon icon="calendar-outline" pack="eva"></nb-icon>
+            {{ budget.budgetPK?.dateDebut | date: 'dd/MM/yyyy' }} - {{ budget.budgetPK?.dateFin | date: 'dd/MM/yyyy' }}
+          </p>
+        </div>
+        <div class="budget-status">
+          <nb-badge
+            [status]="budget.iSvalide ? 'success' : 'warning'"
+            [text]="budget.iSvalide ? 'Validé' : 'En attente'"
+          ></nb-badge>
+        </div>
+      </div>
+    </nb-card-header>
+
+    <nb-card-body>
+      <div class="budget-details">
+        <div class="detail-item">
+          <span class="label">Budget Initial:</span>
+          <span class="value">{{ budget.budgetInitial?.name || 'N/A' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Taux Budget:</span>
+          <span class="value highlight">{{ budget.budgetInitial?.tauxBudget || 0 }}%</span>
+        </div>
+        <div class="detail-item">
+          <span class="label">Employé:</span>
+          <span class="value">{{ budget.employe.nom || 'N/A' }}</span>
+        </div>
+        <div class="detail-item" *ngIf="budget.budgetInitial?.description">
+          <span class="label">Description:</span>
+          <span class="value description">{{ budget.budgetInitial.description }}</span>
+        </div>
+      </div>
+    </nb-card-body>
+
+    <nb-card-footer>
+      <div class="budget-actions">
+        <button nbButton size="small" status="info" outline (click)="openDetailsDialog(budget)">
+          <nb-icon icon="eye-outline"></nb-icon>
+          Détails
+        </button>
+        <button nbButton size="small" status="primary" outline (click)="openEditDialog(budget)">
+          <nb-icon icon="edit-outline"></nb-icon>
+          Modifier
+        </button>
+        <button nbButton size="small" status="danger" outline (click)="confirmDelete(budget)">
+          <nb-icon icon="trash-2-outline"></nb-icon>
+          Supprimer
+        </button>
+      </div>
+    </nb-card-footer>
+  </nb-card>
+</div>
+
+<ng-template #emptyState>
+  <nb-card>
+    <nb-card-body>
+      <div class="empty-state">
+        <nb-icon icon="inbox-outline" status="basic"></nb-icon>
+        <h5>Aucun budget d'investissement</h5>
+        <p>Commencez par ajouter un nouveau budget</p>
+        <button nbButton status="success" (click)="openAddBudgetDialog()">
+          <nb-icon icon="plus-outline"></nb-icon>
+          Ajouter Budget
+        </button>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

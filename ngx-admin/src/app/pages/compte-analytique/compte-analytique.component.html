@@ -1,67 +1,241 @@
-<div class="container-xl">
-  <div class="table-responsive">
-    <div class="table-wrapper">
-      <div class="table-title">
-        <div class="row">
-          <div class="col-sm-5">
-            <h2>Gestion de <b>comptes analytiques</b></h2>
-          </div>
-          <div class="col-sm-7">
-            <div class="search-bar">
-              <input
-                type="text"
-                [(ngModel)]="search"
-                (input)="searchfct()"
-                class="form-control"
-                placeholder="Rechercher ..."
-              />
-            </div>
-            <div class="action-buttons">
-              <button class="btn btn-secondary" (click)="onOpenDialogClick1()">
-                <i class="material-icons">&#xE147;</i> <span>Ajouter un Budget révisé</span>
-              </button>
+<div class="compte-analytique-container">
+  <!-- Header avec statistiques -->
+  <nb-card class="header-card">
+    <nb-card-header>
+      <div class="header-content">
+        <div class="title-section">
+          <h3>Gestion des Comptes Analytiques</h3>
+          <p class="subtitle">Vue d'ensemble des directions et leurs budgets</p>
+        </div>
+        <div class="actions-section">
+          <button nbButton status="success" size="small" (click)="onOpenDialogClick1()">
+            <nb-icon icon="plus-outline"></nb-icon>
+            Ajouter Budget Révisé
+          </button>
+          <button nbButton status="primary" size="small" (click)="onOpenDialogClick()">
+            <nb-icon icon="link-2-outline"></nb-icon>
+            Affecter Budget
+          </button>
+          <button nbButton status="info" size="small" (click)="exportAsXLSX()">
+            <nb-icon icon="download-outline"></nb-icon>
+            Exporter Excel
+          </button>
+        </div>
+      </div>
+    </nb-card-header>
+  </nb-card>
 
-              <button class="btn btn-secondary" (click)="onOpenDialogClick()">
-                <i class="material-icons">&#xE147;</i> <span>Affecter un budget révisé</span>
-              </button>
-
-              <button class="btn btn-secondary" (click)="exportAsXLSX()">
-                <i class="material-icons">&#xE24D;</i> <span>Exporter vers Excel</span>
-              </button>
-            </div>
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="briefcase-outline" status="primary"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Total Directions</span>
+            <span class="kpi-value">{{ listdirections?.length || 0 }}</span>
           </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="checkmark-circle-outline" status="success"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Avec Budget Initial</span>
+            <span class="kpi-value">{{ getDirectionsWithBudgetInitial() }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="refresh-outline" status="warning"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Avec Budget Révisé</span>
+            <span class="kpi-value">{{ getDirectionsWithBudgetRevise() }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="pie-chart-outline" status="info"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Budget Total</span>
+            <span class="kpi-value">{{ getTotalBudget() | currency: 'EUR' : 'symbol' : '1.0-0' }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Filtres et recherche -->
+  <nb-card class="filters-card">
+    <nb-card-body>
+      <div class="filters-content">
+        <!-- Recherche -->
+        <div class="search-box">
+          <input
+            nbInput
+            fullWidth
+            type="text"
+            placeholder="Rechercher une direction, entreprise..."
+            [(ngModel)]="search"
+            (input)="applyFilters()"
+          />
+          <nb-icon icon="search-outline" class="search-icon"></nb-icon>
+        </div>
+
+        <!-- Filtre entreprise -->
+        <div class="filter-group">
+          <label class="filter-label">Entreprise:</label>
+          <nb-select [(selected)]="filterEntreprise" size="small" (selectedChange)="applyFilters()">
+            <nb-option value="all">Toutes</nb-option>
+            <nb-option *ngFor="let ent of getUniqueEntreprises()" [value]="ent">{{ ent }}</nb-option>
+          </nb-select>
+        </div>
+
+        <!-- Filtre budget -->
+        <div class="filter-group">
+          <label class="filter-label">Statut Budget:</label>
+          <nb-select [(selected)]="filterBudget" size="small" (selectedChange)="applyFilters()">
+            <nb-option value="all">Tous</nb-option>
+            <nb-option value="initial">Avec Budget Initial</nb-option>
+            <nb-option value="revise">Avec Budget Révisé</nb-option>
+            <nb-option value="both">Complets</nb-option>
+          </nb-select>
+        </div>
+
+        <!-- Bouton reset -->
+        <button nbButton ghost size="small" (click)="resetFilters()">
+          <nb-icon icon="refresh-outline"></nb-icon>
+          Réinitialiser
+        </button>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Tableau des directions -->
+  <nb-card class="table-card">
+    <nb-card-body>
+      <div class="table-container">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th (click)="sort('id')" class="sortable"># <nb-icon [icon]="getSortIcon('id')"></nb-icon></th>
+              <th (click)="sort('name')" class="sortable">
+                Direction <nb-icon [icon]="getSortIcon('name')"></nb-icon>
+              </th>
+              <th>Entreprise</th>
+              <th (click)="sort('budgetInitial')" class="sortable text-center">
+                Budget Initial <nb-icon [icon]="getSortIcon('budgetInitial')"></nb-icon>
+              </th>
+              <th (click)="sort('budgetRevise')" class="sortable text-center">
+                Budget Révisé <nb-icon [icon]="getSortIcon('budgetRevise')"></nb-icon>
+              </th>
+              <th class="text-center">Statut</th>
+              <th class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let direction of paginatedDirections" class="table-row">
+              <td class="id-cell">{{ direction.id }}</td>
+              <td class="name-cell">
+                <nb-icon icon="briefcase-outline" class="direction-icon"></nb-icon>
+                <strong>{{ direction.name }}</strong>
+              </td>
+              <td>
+                <span class="entreprise-tag">{{ direction.entreprise?.name || '-' }}</span>
+              </td>
+              <td class="text-center">
+                <nb-badge
+                  *ngIf="direction.budgetInitial; else noBudgetInitial"
+                  [text]="getBudgetInitialTaux(direction) + ' €'"
+                  status="success"
+                  position="centered"
+                >
+                </nb-badge>
+                <ng-template #noBudgetInitial>
+                  <nb-badge text="Non défini" status="basic" position="centered"></nb-badge>
+                </ng-template>
+              </td>
+              <td class="text-center">
+                <nb-badge
+                  *ngIf="direction.budgetRevise; else noBudgetRevise"
+                  [text]="getBudgetReviseTaux(direction) + ' €'"
+                  status="warning"
+                  position="centered"
+                >
+                </nb-badge>
+                <ng-template #noBudgetRevise>
+                  <nb-badge text="Non défini" status="basic" position="centered"></nb-badge>
+                </ng-template>
+              </td>
+              <td class="text-center">
+                <nb-badge
+                  [text]="getDirectionStatus(direction)"
+                  [status]="getDirectionStatusBadge(direction)"
+                  position="centered"
+                >
+                </nb-badge>
+              </td>
+              <td class="actions-cell">
+                <button
+                  nbButton
+                  ghost
+                  size="tiny"
+                  status="primary"
+                  nbTooltip="Affecter un budget"
+                  (click)="updateDirection(direction.id)"
+                >
+                  <nb-icon icon="link-2-outline"></nb-icon>
+                </button>
+                <button
+                  nbButton
+                  ghost
+                  size="tiny"
+                  status="info"
+                  nbTooltip="Voir détails"
+                  (click)="viewDetails(direction)"
+                >
+                  <nb-icon icon="eye-outline"></nb-icon>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Message si vide -->
+        <div class="empty-state" *ngIf="filteredDirections.length === 0">
+          <nb-icon icon="inbox-outline"></nb-icon>
+          <h4>Aucune direction trouvée</h4>
+          <p>Aucune direction ne correspond à vos critères de recherche</p>
         </div>
       </div>
 
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nom</th>
-            <th>Budget Initial</th>
-            <th>Budget Révisé</th>
-            <th>Entreprise</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let direction of listdirections">
-            <tr>
-              <td>{{ direction.id }}</td>
-              <td>{{ direction.name }}</td>
-              <td>{{ getBudgetInitialTaux(direction) }}</td>
-              <td>{{ getBudgetReviseTaux(direction) }}</td>
-              <td>{{ direction.entreprise?.name || '-' }}</td>
-              <td>
-                <a class="affect-button" title="Affecter" data-toggle="tooltip" (click)="updateDirection(direction.id)">
-                  <i class="material-icons">check</i>
-                  Affecter
-                </a>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
-      </table>
-    </div>
-  </div>
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="filteredDirections.length > 0">
+        <div class="pagination-info">
+          Affichage {{ (currentPage - 1) * pageSize + 1 }} -
+          {{ Math.min(currentPage * pageSize, filteredDirections.length) }} sur {{ filteredDirections.length }}
+        </div>
+        <div class="pagination-controls">
+          <button nbButton ghost size="small" [disabled]="currentPage === 1" (click)="previousPage()">
+            <nb-icon icon="arrow-back-outline"></nb-icon>
+          </button>
+          <span class="page-indicator">Page {{ currentPage }} / {{ totalPages }}</span>
+          <button nbButton ghost size="small" [disabled]="currentPage === totalPages" (click)="nextPage()">
+            <nb-icon icon="arrow-forward-outline"></nb-icon>
+          </button>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
 </div>

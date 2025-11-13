@@ -1,0 +1,65 @@
+.employee-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 10px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.08);
+}
+
+.nb-card {
+  box-shadow: 0 8px 20px rgba(16, 24, 40, 0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.nb-card-header {
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nb-card-header .header-buttons button {
+  margin-left: 6px;
+}
+
+input[type='file'] {
+  margin-top: 6px;
+}
+
+/* responsive employee avatar */
+@media (max-width: 576px) {
+  .employee-avatar {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+/* image fade in */
+img.img-fade {
+  opacity: 0;
+  transition: opacity 0.28s ease-in-out;
+}
+img.img-fade.loaded {
+  opacity: 1;
+}
+
+/* skeleton placeholder used in other pages */
+.skeleton-card {
+  height: 80px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f3f6f9 25%, #e9eef5 37%, #f3f6f9 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

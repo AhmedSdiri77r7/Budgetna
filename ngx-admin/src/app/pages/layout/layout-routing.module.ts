@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout.component';
 import { Tab1Component, Tab2Component, TabsComponent } from './tabs/tabs.component';
 import { AccordionComponent } from './accordion/accordion.component';
+import { BudgetHistoryComponent } from './budget-history/budget-history.component';
 import { InfiniteListComponent } from './infinite-list/infinite-list.component';
 import { ListComponent } from './list/list.component';
 import { StepperComponent } from './stepper/stepper.component';
@@ -28,6 +29,10 @@ const routes: Routes = [
       {
         path: 'accordion',
         component: AccordionComponent,
+      },
+      {
+        path: 'budget-history',
+        component: BudgetHistoryComponent,
       },
       {
         path: 'tabs',

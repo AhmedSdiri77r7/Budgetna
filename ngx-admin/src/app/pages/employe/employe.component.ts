@@ -1,51 +1,151 @@
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NbDialogService } from '@nebular/theme';
+import { Router } from '@angular/router';
 import { Employe } from '../../model/employe';
 import { EmployeService } from '../../services/employe.service';
+import { TokenStorageService } from '../../services/token-storage.service';
+import { AddEmployeComponent } from './add-employe/add-employe.component';
+import { UpdateEmployeComponent } from './update-employe/update-employe.component';
 
 @Component({
-  selector: 'app-employe',
+  selector: 'ngx-employe',
   templateUrl: './employe.component.html',
   styleUrls: ['./employe.component.scss'],
 })
 export class EmployeComponent implements OnInit {
   listemploye: Employe[] = [];
+  filteredEmployes: Employe[] = [];
   selectedFiles: { [key: number]: File } = {};
   previewUrls: { [key: number]: any } = {};
+
+  // Filters
+  searchTerm: string = '';
+  directionFilter: string = '';
+  roleFilter: string = '';
+  contratFilter: string = '';
+
+  // View mode
+  viewMode: 'grid' | 'list' = 'grid';
+
+  // Unique values for filters
+  uniqueDirections: string[] = [];
+  uniqueRoles: string[] = [];
 
   constructor(
     private employeService: EmployeService,
     private sanitizer: DomSanitizer,
+    private dialogService: NbDialogService,
+    private _router: Router,
+    private tokenStorage: TokenStorageService,
   ) {}
 
   ngOnInit(): void {
     this.loadEmployees();
   }
 
-  loadEmployees() {
+  loadEmployees(): void {
     this.employeService.getEmployes().subscribe(
       data => {
-        // compute a stable image URL per employee to avoid ExpressionChangedAfterItHasBeenCheckedError
         this.listemploye = (data || []).map(emp => {
           const filename = (emp as any).image || (emp as any).imageUrl || (emp as any).imageName || (emp as any).photo;
-          // store a computed, stable URL on the object once
           (emp as any)._imageUrl = filename
             ? this.employeService.getEmployeeImageUrl(filename)
-            : 'assets/default-avatar.png';
+            : 'assets/images/default-avatar.png';
           return emp;
         });
+        this.extractUniqueValues();
+        this.applyFilters();
       },
-      err => console.error(err),
+      _err => {
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
     );
   }
 
-  onFileSelected(event: any, empId: number) {
+  /**
+   * Extrait les valeurs uniques pour les filtres
+   */
+  extractUniqueValues(): void {
+    const directions = new Set<string>();
+    const roles = new Set<string>();
+
+    this.listemploye.forEach(emp => {
+      const dirName = this.getDirectionName(emp.direction);
+      if (dirName) directions.add(dirName);
+      if (emp.role) roles.add(emp.role);
+    });
+
+    this.uniqueDirections = Array.from(directions).sort();
+    this.uniqueRoles = Array.from(roles).sort();
+  }
+
+  /**
+   * Applique tous les filtres
+   */
+  applyFilters(): void {
+    let filtered = [...this.listemploye];
+
+    // Search filter
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        emp =>
+          (emp.nom || '').toLowerCase().includes(term) ||
+          (emp.prenom || '').toLowerCase().includes(term) ||
+          (emp.email || '').toLowerCase().includes(term),
+      );
+    }
+
+    // Direction filter
+    if (this.directionFilter) {
+      filtered = filtered.filter(emp => this.getDirectionName(emp.direction) === this.directionFilter);
+    }
+
+    // Role filter
+    if (this.roleFilter) {
+      filtered = filtered.filter(emp => emp.role === this.roleFilter);
+    }
+
+    // Contrat filter
+    if (this.contratFilter === 'with') {
+      filtered = filtered.filter(emp => emp.contrat != null);
+    } else if (this.contratFilter === 'without') {
+      filtered = filtered.filter(emp => emp.contrat == null);
+    }
+
+    this.filteredEmployes = filtered;
+  }
+
+  /**
+   * KPI calculations
+   */
+  getUniqueDirectionsCount(): number {
+    return this.uniqueDirections.length;
+  }
+
+  getEmployesWithContrat(): number {
+    return this.listemploye.filter(emp => emp.contrat != null).length;
+  }
+
+  getEmployesWithRole(): number {
+    return this.listemploye.filter(emp => emp.role).length;
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.searchTerm || this.directionFilter || this.roleFilter || this.contratFilter);
+  }
+
+  /**
+   * Image handling
+   */
+  onFileSelected(event: any, empId: number): void {
     const file = event.target.files[0];
     if (!file) return;
 
     this.selectedFiles[empId] = file;
 
-    // Prévisualisation locale
     const reader = new FileReader();
     reader.onload = () => {
       this.previewUrls[empId] = this.sanitizer.bypassSecurityTrustUrl(reader.result as string);
@@ -53,18 +153,14 @@ export class EmployeComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  uploadImage(empId: number) {
+  uploadImage(empId: number): void {
     const file = this.selectedFiles[empId];
     if (!file) return;
 
     this.employeService.uploadImage(empId, file).subscribe(
       updatedEmp => {
-        alert('Image uploadée avec succès !');
-
-        // Mettre à jour l'image dans la liste locale
         const index = this.listemploye.findIndex(emp => emp.id === empId);
         if (index !== -1) {
-          // Keep both properties up-to-date so template/service can read either
           const filename =
             (updatedEmp as any).imageUrl ||
             (updatedEmp as any).image ||
@@ -72,41 +168,60 @@ export class EmployeComponent implements OnInit {
             (updatedEmp as any).photo;
           this.listemploye[index].image = filename;
           this.listemploye[index].imageUrl = filename;
-          // recompute the stable URL once after upload
           (this.listemploye[index] as any)._imageUrl = filename
             ? this.employeService.getEmployeeImageUrl(filename)
-            : 'assets/default-avatar.png';
+            : 'assets/images/default-avatar.png';
         }
 
         delete this.selectedFiles[empId];
         delete this.previewUrls[empId];
+        this.loadEmployees();
       },
-      err => {
-        console.error('Erreur lors de l’upload :', err);
-        alert('Erreur lors de l’upload');
+      _err => {
+        alert("Erreur lors de l'upload");
       },
     );
   }
 
-  getImageUrl(emp: Employe): string {
-    // If there's a local preview (before upload), return the preview (already sanitized)
-    if (this.previewUrls[emp.id]) return this.previewUrls[emp.id];
+  /**
+   * Helpers
+   */
+  getDirectionName(direction: any): string {
+    if (!direction) return '';
+    return typeof direction === 'object' ? direction.name : direction.toString();
+  }
 
-    // Accept multiple possible property names returned by backend
-    const filename = (emp as any).image || (emp as any).imageUrl || (emp as any).imageName || (emp as any).photo;
+  /**
+   * Dialogs
+   */
+  onOpenDialogClick(): void {
+    this.dialogService.open(AddEmployeComponent).onClose.subscribe(() => {
+      this.loadEmployees();
+    });
+  }
 
-    // If there's no filename, return default avatar from assets
-    if (!filename) return 'assets/default-avatar.png';
+  updateEmploye(id: number): void {
+    this.employeService.sendEventData(id);
+    this.dialogService.open(UpdateEmployeComponent).onClose.subscribe(() => {
+      this.loadEmployees();
+    });
+  }
 
-    // If backend already returned a full URL or a data URL, return it as-is
-    if (
-      typeof filename === 'string' &&
-      (filename.startsWith('http') || filename.startsWith('data:') || filename.startsWith('blob:'))
-    ) {
-      return filename;
+  confirmDelete(employe: Employe): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'employé "${employe.nom} ${employe.prenom}" ?`)) {
+      this.deleteEmploye(employe.id);
     }
+  }
 
-    // Otherwise build full URL via service
-    return this.employeService.getEmployeeImageUrl(filename);
+  deleteEmploye(id: number): void {
+    this.employeService.deleteEmploye(id).subscribe(
+      () => {
+        this.loadEmployees();
+      },
+      _err => {
+        this._router.navigateByUrl('/auth');
+        this.tokenStorage.signOut();
+      },
+    );
   }
 }

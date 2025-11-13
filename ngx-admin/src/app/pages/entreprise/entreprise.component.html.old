@@ -1,0 +1,106 @@
+<div class="container-xl">
+  <div class="table-responsive">
+    <div class="table-wrapper">
+      <div class="table-title">
+        <div class="row">
+          <div class="col-sm-5">
+            <h2>Gestion <b>Entreprise</b></h2>
+          </div>
+          <div class="col-sm-7">
+            <a (click)="onOpenDialogClick()" class="btn btn-secondary"
+              ><i class="material-icons">&#xE147;</i> <span>Ajouter une Entreprise</span></a
+            >
+            <a (click)="exportAsXLSX()" class="btn btn-secondary"
+              ><i class="material-icons">&#xE24D;</i> <span>Export to Excel</span></a
+            >
+          </div>
+        </div>
+      </div>
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Raison social</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let entreprise of entreprises">
+            <tr>
+              <td>{{ entreprise.id }}</td>
+              <td>{{ entreprise.name }}</td>
+              <td>{{ entreprise.raisonSocial }}</td>
+              <td>
+                <a class="settings" title="Settings" data-toggle="tooltip" (click)="updateEntreprise(entreprise.id)"
+                  ><i class="material-icons">&#xE8B8;</i></a
+                >
+                <a class="delete" title="Delete" data-toggle="tooltip" (click)="deleteEntr(entreprise.id)"
+                  ><i class="material-icons">&#xE5C9;</i></a
+                >
+                <a class="info" title="Voir Directions" data-toggle="tooltip" (click)="toggleDetails(entreprise)"
+                  ><i class="material-icons">&#xE8F4;</i></a
+                >
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4" class="p-0 border-0">
+                <div *ngIf="entreprise._expanded" class="enterprise-details p-3 bg-light">
+                  <div *ngIf="!entreprise._detailsLoaded">
+                    <div class="row">
+                      <div class="col-md-4 mb-3" *ngFor="let _i of [1, 2, 3]">
+                        <div class="skeleton-card"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="entreprise._detailsLoaded">
+                    <div class="row">
+                      <div class="col-12">
+                        <h5>Directions for {{ entreprise.name }}</h5>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-4 mb-3" *ngFor="let dir of entreprise._details.directions">
+                        <div class="card h-100">
+                          <div class="card-body">
+                            <h6 class="card-title">{{ dir.name }}</h6>
+                            <p class="card-text text-muted mb-2">Direction ID: {{ dir.id }}</p>
+                            <div *ngIf="(entreprise._details.map[dir.id] || []).length === 0" class="text-muted">
+                              Aucun employé
+                            </div>
+                            <ul class="list-unstyled mb-0">
+                              <li *ngFor="let emp of entreprise._details.map[dir.id]">
+                                <div class="d-flex align-items-center mb-2">
+                                  <img
+                                    [src]="
+                                      emp._imageUrl ||
+                                      (emp.image || emp.imageUrl
+                                        ? emp.image || emp.imageUrl
+                                        : 'assets/default-avatar.png')
+                                    "
+                                    alt="avatar"
+                                    (load)="onAvatarLoad($event)"
+                                    class="mr-2 img-fade"
+                                    style="width: 36px; height: 36px; object-fit: cover; border-radius: 50%"
+                                  />
+                                  <div>
+                                    <div class="font-weight-bold">{{ emp.nom }} {{ emp.prenom }}</div>
+                                    <div class="text-muted small">{{ emp.role }}</div>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

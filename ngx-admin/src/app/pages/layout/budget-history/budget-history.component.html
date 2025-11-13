@@ -1,0 +1,207 @@
+<div class="budget-history-container">
+  <!-- Header avec actions -->
+  <nb-card class="header-card">
+    <nb-card-body>
+      <div class="header-content">
+        <div class="title-section">
+          <h3>Historique des Budgets par Employé</h3>
+          <p class="subtitle">Vue d'ensemble des budgets par utilisateur</p>
+        </div>
+        <div class="actions-section">
+          <button nbButton status="primary" size="small" (click)="refresh()" [disabled]="isLoading">
+            <nb-icon icon="refresh-outline"></nb-icon>
+            Actualiser
+          </button>
+          <button nbButton status="info" size="small" (click)="exportToExcel()" [disabled]="isLoading">
+            <nb-icon icon="download-outline"></nb-icon>
+            Exporter Excel
+          </button>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Filtres et recherche -->
+  <nb-card class="filters-card">
+    <nb-card-body>
+      <div class="filters-content">
+        <!-- Recherche -->
+        <div class="search-box">
+          <input
+            nbInput
+            fullWidth
+            type="text"
+            placeholder="Rechercher un employé..."
+            [(ngModel)]="searchTerm"
+            [disabled]="isLoading"
+          />
+          <nb-icon icon="search-outline" class="search-icon"></nb-icon>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filter-group">
+          <label class="filter-label">Statut:</label>
+          <nb-select [(selected)]="filterStatus" size="small" [disabled]="isLoading">
+            <nb-option value="all">Tous</nb-option>
+            <nb-option value="valide">Validés</nb-option>
+            <nb-option value="enAttente">En attente</nb-option>
+          </nb-select>
+        </div>
+
+        <!-- Tri -->
+        <div class="sort-group">
+          <label class="filter-label">Trier par:</label>
+          <nb-select [(selected)]="sortBy" size="small" (selectedChange)="changeSorting($event)" [disabled]="isLoading">
+            <nb-option value="name">Nom</nb-option>
+            <nb-option value="totalBudgets">Total budgets</nb-option>
+            <nb-option value="tauxValidation">Taux validation</nb-option>
+          </nb-select>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Loading -->
+  <nb-card *ngIf="isLoading" class="loading-card">
+    <nb-card-body>
+      <div class="loading-content">
+        <nb-spinner status="primary"></nb-spinner>
+        <p>Chargement de l'historique...</p>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Liste des employés et leurs budgets -->
+  <div class="history-list" *ngIf="!isLoading">
+    <nb-card *ngFor="let history of filteredHistories" class="employe-card">
+      <nb-card-header (click)="selectEmploye(history)" class="clickable">
+        <div class="employe-header">
+          <div class="employe-info">
+            <nb-user
+              [name]="history.employe.nom + ' ' + history.employe.prenom"
+              [title]="history.employe.email"
+              size="medium"
+            >
+            </nb-user>
+          </div>
+          <div class="employe-stats">
+            <div class="stat-item">
+              <span class="stat-label">Total:</span>
+              <span class="stat-value">{{ history.totalBudgets }}</span>
+            </div>
+            <div class="stat-item success">
+              <span class="stat-label">Validés:</span>
+              <span class="stat-value">{{ history.budgetsValides }}</span>
+            </div>
+            <div class="stat-item warning">
+              <span class="stat-label">En attente:</span>
+              <span class="stat-value">{{ history.budgetsEnAttente }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Taux:</span>
+              <span class="stat-value">{{ history.tauxValidation }}%</span>
+            </div>
+          </div>
+          <div class="expand-icon">
+            <nb-icon [icon]="selectedEmploye === history ? 'chevron-up-outline' : 'chevron-down-outline'"></nb-icon>
+          </div>
+        </div>
+      </nb-card-header>
+
+      <!-- Détails des budgets (accordéon) -->
+      <nb-card-body *ngIf="selectedEmploye === history" class="budgets-detail">
+        <div class="budgets-table-container">
+          <table class="budgets-table">
+            <thead>
+              <tr>
+                <th>Budget Initial</th>
+                <th>Libellé</th>
+                <th>Date Début</th>
+                <th>Date Fin</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let budget of getFilteredBudgets(history)">
+                <td>{{ budget.budgetInitial?.name || budget.budgetPK?.idBudgetInitial }}</td>
+                <td>{{ budget.budgetPK?.libelle }}</td>
+                <td>{{ budget.budgetPK?.dateDebut | date: 'dd/MM/yyyy' }}</td>
+                <td>{{ budget.budgetPK?.dateFin | date: 'dd/MM/yyyy' }}</td>
+                <td>
+                  <nb-badge [text]="getStatusText(budget)" [status]="getStatusBadgeClass(budget)"></nb-badge>
+                </td>
+                <td>
+                  <button
+                    nbButton
+                    size="tiny"
+                    status="info"
+                    ghost
+                    nbTooltip="Voir détails"
+                    (click)="openBudgetDetails(budget, history.employe)"
+                  >
+                    <nb-icon icon="eye-outline"></nb-icon>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Message si aucun budget -->
+          <div class="no-budgets" *ngIf="getFilteredBudgets(history).length === 0">
+            <nb-icon icon="inbox-outline"></nb-icon>
+            <p>Aucun budget correspondant aux filtres</p>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Message si aucun résultat -->
+    <nb-card *ngIf="filteredHistories.length === 0" class="empty-state">
+      <nb-card-body>
+        <div class="empty-content">
+          <nb-icon icon="people-outline"></nb-icon>
+          <h4>Aucun employé trouvé</h4>
+          <p>Aucun employé ne correspond à votre recherche</p>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Résumé global -->
+  <nb-card class="summary-card" *ngIf="!isLoading && filteredHistories.length > 0">
+    <nb-card-header> Résumé Global </nb-card-header>
+    <nb-card-body>
+      <div class="summary-grid">
+        <div class="summary-item">
+          <nb-icon icon="people-outline" status="primary"></nb-icon>
+          <div class="summary-content">
+            <span class="summary-label">Employés</span>
+            <span class="summary-value">{{ filteredHistories.length }}</span>
+          </div>
+        </div>
+        <div class="summary-item">
+          <nb-icon icon="file-text-outline" status="info"></nb-icon>
+          <div class="summary-content">
+            <span class="summary-label">Total Budgets</span>
+            <span class="summary-value">{{ getTotalBudgets() }}</span>
+          </div>
+        </div>
+        <div class="summary-item">
+          <nb-icon icon="checkmark-circle-outline" status="success"></nb-icon>
+          <div class="summary-content">
+            <span class="summary-label">Budgets Validés</span>
+            <span class="summary-value">{{ getTotalBudgetsValides() }}</span>
+          </div>
+        </div>
+        <div class="summary-item">
+          <nb-icon icon="clock-outline" status="warning"></nb-icon>
+          <div class="summary-content">
+            <span class="summary-label">En Attente</span>
+            <span class="summary-value">{{ getTotalBudgetsEnAttente() }}</span>
+          </div>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</div>

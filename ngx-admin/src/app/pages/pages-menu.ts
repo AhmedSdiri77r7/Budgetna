@@ -42,12 +42,13 @@ export const MENU_ITEMS: NbMenuItem[] = [
     icon: 'file-text-outline',
     link: '/pages/contrat',
     home: true,
-  },
+  },*/
   {
     title: 'Dashboard',
     icon: 'activity-outline',
-    link: '/pages/iot-dashboard',
-  },*/
+    link: '/pages/budget-dashboard',
+    home: true,
+  },
   {
     title: 'FEATURES',
     group: true,
@@ -76,6 +77,10 @@ export const MENU_ITEMS: NbMenuItem[] = [
         title: 'Budget',
         pathMatch: 'prefix',
         link: '/pages/layout/tabs',
+      },
+      {
+        title: 'Historique des Budgets',
+        link: '/pages/layout/budget-history',
       },
     ],
   },

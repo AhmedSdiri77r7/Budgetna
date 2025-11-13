@@ -35,6 +35,9 @@ import { NewsPostPlaceholderComponent } from './infinite-list/news-post-placehol
 import { AccordionComponent } from './accordion/accordion.component';
 import { ConfirmationDialogComponent } from './accordion/confirmation-dialog/confirmation-dialog.component';
 import { BudgetDetailsComponent } from './accordion/budget-details/budget-details.component';
+import { BudgetHistoryComponent } from './budget-history/budget-history.component';
+import { AddBudgetDialogComponent } from './tabs/add-budget-dialog/add-budget-dialog.component';
+import { BudgetDetailsDialogComponent } from './tabs/budget-details-dialog/budget-details-dialog.component';
 
 @NgModule({
   imports: [
@@ -76,6 +79,9 @@ import { BudgetDetailsComponent } from './accordion/budget-details/budget-detail
     AccordionComponent,
     ConfirmationDialogComponent,
     BudgetDetailsComponent,
+    BudgetHistoryComponent,
+    AddBudgetDialogComponent,
+    BudgetDetailsDialogComponent,
   ],
   providers: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

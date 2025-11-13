@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { NbDialogService } from '@nebular/theme';
 import { Router } from '@angular/router';
-import { mergeAll } from 'rxjs-compat/operator/mergeAll';
-import { tap } from 'rxjs/operators';
 import { Direction } from '../../model/direction';
 import { DirectionService } from '../../services/direction.service';
 import { ExcelService } from '../../services/excel.service';
@@ -16,16 +14,18 @@ import { UpdateDirectionComponent } from './update-direction/update-direction.co
   styleUrls: ['./direction.component.scss'],
 })
 export class DirectionComponent implements OnInit {
-  listdirections: Direction[];
+  listdirections: Direction[] = [];
   directionsByEntreprise: Map<string, Direction[]> = new Map();
-  search: string;
+  filteredDirectionsByEntreprise: Map<string, Direction[]> = new Map();
+  search: string = '';
+  budgetFilter: string = 'all';
   direction: Direction;
 
   constructor(
     private _router: Router,
     private tokenStorage: TokenStorageService,
     private serviceDirection: DirectionService,
-    private matDialog: MatDialog,
+    private dialogService: NbDialogService,
     private excelService: ExcelService,
   ) {}
 
@@ -33,47 +33,86 @@ export class DirectionComponent implements OnInit {
     this.serviceDirection.getDirections().subscribe(
       data => {
         this.listdirections = data;
-
-        // Group directions by entreprise
-        this.directionsByEntreprise.clear();
-        data.forEach(direction => {
-          const entrepriseName = direction.entreprise?.name || 'Sans entreprise';
-          if (!this.directionsByEntreprise.has(entrepriseName)) {
-            this.directionsByEntreprise.set(entrepriseName, []);
-          }
-          this.directionsByEntreprise.get(entrepriseName).push(direction);
-        });
-
-        console.log('Directions by entreprise:', this.directionsByEntreprise);
+        this.regroupDirections(data);
+        this.applyFilters();
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
   }
-  onOpenDialogClick() {
-    this.matDialog.open(AddDirectionComponent);
+
+  /**
+   * Calcul des KPIs
+   */
+  getDirectionsWithBudgetInitial(): number {
+    return this.listdirections.filter(d => this.hasBudgetInitial(d)).length;
   }
-  deleteDirection(id: number) {
+
+  getDirectionsWithBudgetRevise(): number {
+    return this.listdirections.filter(d => this.hasBudgetRevise(d)).length;
+  }
+
+  hasBudgetInitial(direction: Direction): boolean {
+    return direction.budgetInitial != null;
+  }
+
+  hasBudgetRevise(direction: Direction): boolean {
+    return direction.budgetRevise != null;
+  }
+
+  getBudgetInitialTotal(direction: Direction): number {
+    return direction.budgetInitial?.tauxBudget || 0;
+  }
+
+  getBudgetReviseTotal(direction: Direction): number {
+    return direction.budgetRevise?.tauxBudget || 0;
+  }
+  /**
+   * Ouvre le dialogue d'ajout de direction
+   */
+  onOpenDialogClick(): void {
+    this.dialogService.open(AddDirectionComponent).onClose.subscribe(() => {
+      this.refreshDirections();
+    });
+  }
+
+  /**
+   * Confirme et supprime une direction
+   */
+  confirmDelete(direction: Direction): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer la direction "${direction.name}" ?`)) {
+      this.deleteDirection(direction.id);
+    }
+  }
+
+  deleteDirection(id: number): void {
     this.serviceDirection.deleteDirection(id).subscribe(
       () => {
-        this.serviceDirection.getDirections().subscribe(data => {
-          this.listdirections = data;
-          this.regroupDirections(data);
-          console.log('Directions updated after delete:', this.directionsByEntreprise);
-        });
+        this.refreshDirections();
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
   }
-  searchfct() {
+
+  refreshDirections(): void {
+    this.serviceDirection.getDirections().subscribe(data => {
+      this.listdirections = data;
+      this.regroupDirections(data);
+      this.applyFilters();
+    });
+  }
+  /**
+   * Recherche dans les directions
+   */
+  searchfct(): void {
     if (!this.search) {
-      // Si la recherche est vide, réinitialiser le regroupement
       this.regroupDirections(this.listdirections);
+      this.applyFilters();
       return;
     }
 
@@ -84,11 +123,50 @@ export class DirectionComponent implements OnInit {
         direction.entreprise?.name.toLowerCase().includes(searchTerm),
     );
 
-    // Regrouper les directions filtrées
     this.regroupDirections(filteredDirections);
+    this.applyFilters();
   }
 
-  private regroupDirections(directions: Direction[]) {
+  /**
+   * Applique les filtres de budget
+   */
+  applyFilters(): void {
+    this.filteredDirectionsByEntreprise.clear();
+
+    this.directionsByEntreprise.forEach((directions, entrepriseName) => {
+      let filtered = directions;
+
+      // Filter by budget status
+      if (this.budgetFilter !== 'all') {
+        filtered = directions.filter(d => {
+          const hasInitial = this.hasBudgetInitial(d);
+          const hasRevise = this.hasBudgetRevise(d);
+
+          switch (this.budgetFilter) {
+            case 'both':
+              return hasInitial && hasRevise;
+            case 'initial':
+              return hasInitial && !hasRevise;
+            case 'revise':
+              return !hasInitial && hasRevise;
+            case 'none':
+              return !hasInitial && !hasRevise;
+            default:
+              return true;
+          }
+        });
+      }
+
+      if (filtered.length > 0) {
+        this.filteredDirectionsByEntreprise.set(entrepriseName, filtered);
+      }
+    });
+  }
+
+  /**
+   * Regroupe les directions par entreprise
+   */
+  private regroupDirections(directions: Direction[]): void {
     this.directionsByEntreprise.clear();
     directions.forEach(direction => {
       const entrepriseName = direction.entreprise?.name || 'Sans entreprise';
@@ -98,23 +176,46 @@ export class DirectionComponent implements OnInit {
       this.directionsByEntreprise.get(entrepriseName).push(direction);
     });
   }
-  updateDirection(id: number) {
-    this.direction = this.serviceDirection.sendEventData(id);
-    this.matDialog.open(UpdateDirectionComponent);
-  }
-  exportAsXLSX(): void {
-    this.downloadFile(this.listdirections, 'test');
-  }
-  downloadFile(data, filename = 'data') {
-    const csvData = this.ConvertToCSV(data, ['id', 'name', 'budgetInitials', 'budgetRevise', 'entreprise']);
 
+  /**
+   * Met à jour une direction
+   */
+  updateDirection(id: number): void {
+    this.direction = this.serviceDirection.sendEventData(id);
+    this.dialogService.open(UpdateDirectionComponent).onClose.subscribe(() => {
+      this.refreshDirections();
+    });
+  }
+  /**
+   * Exporte les directions en CSV
+   */
+  exportAsXLSX(): void {
+    const dataToExport = this.listdirections.map(d => ({
+      ID: d.id,
+      Nom: d.name,
+      Entreprise: d.entreprise?.name || 'Sans entreprise',
+      'Budget Initial': this.getBudgetInitialTotal(d),
+      'Budget Révisé': this.getBudgetReviseTotal(d),
+      'Statut Budget':
+        this.hasBudgetInitial(d) && this.hasBudgetRevise(d)
+          ? 'Complet'
+          : this.hasBudgetInitial(d)
+            ? 'Initial'
+            : this.hasBudgetRevise(d)
+              ? 'Révisé'
+              : 'Aucun',
+    }));
+    this.downloadFile(dataToExport, 'directions');
+  }
+
+  downloadFile(data: any[], filename: string = 'data'): void {
+    const csvData = this.ConvertToCSV(data);
     const blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
-    console.log(csvData);
     const dwldLink = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    const isSafariBrowser = navigator.userAgent.indexOf('Safari') != -1 && navigator.userAgent.indexOf('Chrome') == -1;
+    const isSafariBrowser =
+      navigator.userAgent.indexOf('Safari') !== -1 && navigator.userAgent.indexOf('Chrome') === -1;
     if (isSafariBrowser) {
-      // if Safari open in new window to save file with random filename.
       dwldLink.setAttribute('target', '_blank');
     }
     dwldLink.setAttribute('href', url);
@@ -124,53 +225,15 @@ export class DirectionComponent implements OnInit {
     dwldLink.click();
     document.body.removeChild(dwldLink);
   }
-  ConvertToCSV(objArray, headerList) {
-    const headerList2 = ['id', 'name', 'description', 'tauxBudget'];
-    const array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    console.log(array);
-    let str = '';
-    let row = 'S.No,';
 
-    row += headerList[0] + ',';
-    row += headerList[1] + ',';
-    row += headerList[2] + ',';
-    row += ',';
-    row += ',';
-    row += ',';
-    row += headerList[3] + ',';
-    row += ',';
-    row += ',';
-    row += ',';
-    row += headerList[4] + ',';
-    row += ',';
-    row += ',';
-    row += ',';
-
-    row = row.slice(0, -1);
-    str += row + '\r\n';
-    for (let i = 0; i < array.length; i++) {
-      let line = i + 1 + '';
-      for (const index in headerList) {
-        const head = headerList[index];
-
-        if (typeof array[i][head] == 'object') {
-          if (array[i][head] != null) {
-            for (const index2 in headerList2) {
-              const head2 = headerList2[index2];
-              line += ',' + array[i][head][head2];
-            }
-          } else {
-            line += ',' + 'null';
-            line += ',' + 'null';
-            line += ',' + 'null';
-            line += ',' + 'null';
-          }
-        } else {
-          line += ',' + array[i][head];
-        }
-      }
-      str += line + '\r\n';
-    }
+  ConvertToCSV(objArray: any[]): string {
+    if (objArray.length === 0) return '';
+    const keys = Object.keys(objArray[0]);
+    let str = keys.join(',') + '\r\n';
+    objArray.forEach(obj => {
+      const row = keys.map(key => obj[key] || '').join(',');
+      str += row + '\r\n';
+    });
     return str;
   }
 }

@@ -1,40 +1,279 @@
-<div class="row">
-  <div class="col-md-4 mb-4" *ngFor="let emp of listemploye">
-    <nb-card>
-      <nb-card-header class="d-flex justify-content-between align-items-center">
-        <div>{{ emp.nom }} {{ emp.prenom }}</div>
-        <div class="header-buttons">
-          <button nbButton size="tiny" status="primary">
-            <i class="material-icons">edit</i>
-          </button>
-          <button nbButton size="tiny" status="danger">
-            <i class="material-icons">delete</i>
+<div class="employe-container">
+  <!-- Header -->
+  <nb-card class="header-card">
+    <nb-card-header>
+      <div class="header-content">
+        <div class="title-section">
+          <h3>Gestion des Employés</h3>
+          <p class="subtitle">Gérer les employés et leurs informations</p>
+        </div>
+        <div class="actions-section">
+          <div class="view-toggle">
+            <button
+              nbButton
+              [ghost]="viewMode !== 'grid'"
+              [status]="viewMode === 'grid' ? 'primary' : 'basic'"
+              size="small"
+              (click)="viewMode = 'grid'"
+              nbTooltip="Vue grille"
+            >
+              <nb-icon icon="grid-outline"></nb-icon>
+            </button>
+            <button
+              nbButton
+              [ghost]="viewMode !== 'list'"
+              [status]="viewMode === 'list' ? 'primary' : 'basic'"
+              size="small"
+              (click)="viewMode = 'list'"
+              nbTooltip="Vue liste"
+            >
+              <nb-icon icon="list-outline"></nb-icon>
+            </button>
+          </div>
+          <button nbButton status="primary" size="small" (click)="onOpenDialogClick()">
+            <nb-icon icon="person-add-outline"></nb-icon>
+            Nouvel Employé
           </button>
         </div>
-      </nb-card-header>
+      </div>
+    </nb-card-header>
+  </nb-card>
 
-      <nb-card-body class="text-center">
-        <!-- Prévisualisation locale -->
-        <img *ngIf="previewUrls[emp.id]; else existingImage" [src]="previewUrls[emp.id]" class="employee-avatar mb-2" />
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="people-outline" status="primary"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Total Employés</span>
+            <span class="kpi-value">{{ filteredEmployes?.length || 0 }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
 
-        <!-- Image existante depuis Spring Boot (accepte image ou imageUrl) -->
-        <ng-template #existingImage>
-          <img *ngIf="emp.image || emp.imageUrl; else noImage" [src]="getImageUrl(emp)" class="employee-avatar mb-2" />
-        </ng-template>
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="layers-outline" status="success"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Directions</span>
+            <span class="kpi-value">{{ getUniqueDirectionsCount() }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
 
-        <!-- Avatar par défaut si aucune image -->
-        <ng-template #noImage>
-          <img src="assets/default-avatar.png" class="employee-avatar mb-2" />
-        </ng-template>
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="file-text-outline" status="info"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Avec Contrat</span>
+            <span class="kpi-value">{{ getEmployesWithContrat() }}</span>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
 
-        <p class="mb-1"><strong>Role:</strong> {{ emp.role }}</p>
-        <p class="mb-2"><strong>Email:</strong> {{ emp.email }}</p>
-
-        <input type="file" (change)="onFileSelected($event, emp.id)" accept="image/*" />
-        <button nbButton size="tiny" status="success" *ngIf="selectedFiles[emp.id]" (click)="uploadImage(emp.id)">
-          Upload
-        </button>
+    <nb-card class="kpi-card">
+      <nb-card-body>
+        <div class="kpi-content">
+          <nb-icon icon="shield-outline" status="warning"></nb-icon>
+          <div class="kpi-details">
+            <span class="kpi-label">Rôles Définis</span>
+            <span class="kpi-value">{{ getEmployesWithRole() }}</span>
+          </div>
+        </div>
       </nb-card-body>
     </nb-card>
   </div>
+
+  <!-- Filtres -->
+  <nb-card class="filters-card">
+    <nb-card-body>
+      <div class="filters-content">
+        <div class="search-box">
+          <input
+            nbInput
+            fullWidth
+            type="text"
+            placeholder="Rechercher par nom, prénom, email..."
+            [(ngModel)]="searchTerm"
+            (input)="applyFilters()"
+          />
+          <nb-icon icon="search-outline" class="search-icon"></nb-icon>
+        </div>
+        <nb-select placeholder="Toutes directions" [(ngModel)]="directionFilter" (selectedChange)="applyFilters()">
+          <nb-option value="">Toutes</nb-option>
+          <nb-option *ngFor="let dir of uniqueDirections" [value]="dir">{{ dir }}</nb-option>
+        </nb-select>
+        <nb-select placeholder="Tous rôles" [(ngModel)]="roleFilter" (selectedChange)="applyFilters()">
+          <nb-option value="">Tous</nb-option>
+          <nb-option *ngFor="let role of uniqueRoles" [value]="role">{{ role }}</nb-option>
+        </nb-select>
+        <nb-select placeholder="Statut contrat" [(ngModel)]="contratFilter" (selectedChange)="applyFilters()">
+          <nb-option value="">Tous</nb-option>
+          <nb-option value="with">Avec contrat</nb-option>
+          <nb-option value="without">Sans contrat</nb-option>
+        </nb-select>
+      </div>
+    </nb-card-body>
+  </nb-card>
+
+  <!-- Vue Grille -->
+  <div class="employes-grid" *ngIf="viewMode === 'grid'">
+    <nb-card *ngFor="let employe of filteredEmployes" class="employe-card">
+      <nb-card-body>
+        <div class="employe-avatar">
+          <img [src]="employe._imageUrl || 'assets/images/default-avatar.png'" [alt]="employe.nom" />
+          <div class="upload-overlay">
+            <input
+              type="file"
+              [id]="'file-' + employe.id"
+              (change)="onFileSelected($event, employe.id)"
+              accept="image/*"
+            />
+            <label [for]="'file-' + employe.id" nbButton ghost size="tiny" status="primary">
+              <nb-icon icon="camera-outline"></nb-icon>
+            </label>
+          </div>
+        </div>
+
+        <div class="employe-info">
+          <h5>{{ employe.nom }} {{ employe.prenom }}</h5>
+          <p class="email">{{ employe.email }}</p>
+
+          <div class="employe-meta">
+            <nb-badge
+              *ngIf="employe.direction"
+              [text]="getDirectionName(employe.direction)"
+              status="info"
+              [nbTooltip]="'Direction: ' + getDirectionName(employe.direction)"
+            ></nb-badge>
+            <nb-badge *ngIf="employe.role" [text]="employe.role" status="success"></nb-badge>
+            <nb-badge *ngIf="employe.contrat" text="Contrat" status="primary" [nbTooltip]="'Contrat actif'"></nb-badge>
+          </div>
+
+          <div class="employe-actions">
+            <button
+              nbButton
+              ghost
+              size="tiny"
+              status="primary"
+              nbTooltip="Modifier"
+              (click)="updateEmploye(employe.id)"
+            >
+              <nb-icon icon="edit-outline"></nb-icon>
+            </button>
+            <button
+              nbButton
+              ghost
+              size="tiny"
+              status="success"
+              nbTooltip="Upload image"
+              (click)="uploadImage(employe.id)"
+              *ngIf="selectedFiles[employe.id]"
+            >
+              <nb-icon icon="upload-outline"></nb-icon>
+            </button>
+            <button nbButton ghost size="tiny" status="danger" nbTooltip="Supprimer" (click)="confirmDelete(employe)">
+              <nb-icon icon="trash-2-outline"></nb-icon>
+            </button>
+          </div>
+        </div>
+      </nb-card-body>
+    </nb-card>
+
+    <!-- Empty state -->
+    <nb-card *ngIf="filteredEmployes?.length === 0" class="empty-state-card">
+      <nb-card-body>
+        <div class="empty-content">
+          <nb-icon icon="inbox-outline"></nb-icon>
+          <h4>Aucun employé trouvé</h4>
+          <p>
+            {{ hasActiveFilters() ? 'Aucun employé ne correspond à vos critères' : 'Commencez par ajouter un employé' }}
+          </p>
+          <button nbButton status="primary" (click)="onOpenDialogClick()" *ngIf="!hasActiveFilters()">
+            <nb-icon icon="person-add-outline"></nb-icon>
+            Ajouter un employé
+          </button>
+        </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+
+  <!-- Vue Liste -->
+  <nb-card *ngIf="viewMode === 'list'" class="list-view-card">
+    <nb-card-body>
+      <div class="employes-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Nom</th>
+              <th>Email</th>
+              <th>Direction</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let employe of filteredEmployes">
+              <td>
+                <nb-user
+                  [name]="''"
+                  [picture]="employe._imageUrl || 'assets/images/default-avatar.png'"
+                  size="medium"
+                  onlyPicture
+                ></nb-user>
+              </td>
+              <td>
+                <strong>{{ employe.nom }} {{ employe.prenom }}</strong>
+              </td>
+              <td>{{ employe.email }}</td>
+              <td>{{ getDirectionName(employe.direction) || '-' }}</td>
+              <td>{{ employe.role || '-' }}</td>
+              <td>
+                <nb-badge *ngIf="employe.contrat" text="Contrat actif" status="success"></nb-badge>
+                <nb-badge *ngIf="!employe.contrat" text="Sans contrat" status="basic"></nb-badge>
+              </td>
+              <td>
+                <div class="table-actions">
+                  <button
+                    nbButton
+                    ghost
+                    size="tiny"
+                    status="primary"
+                    nbTooltip="Modifier"
+                    (click)="updateEmploye(employe.id)"
+                  >
+                    <nb-icon icon="edit-outline"></nb-icon>
+                  </button>
+                  <button
+                    nbButton
+                    ghost
+                    size="tiny"
+                    status="danger"
+                    nbTooltip="Supprimer"
+                    (click)="confirmDelete(employe)"
+                  >
+                    <nb-icon icon="trash-2-outline"></nb-icon>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Empty state pour table -->
+        <div *ngIf="filteredEmployes?.length === 0" class="table-empty">
+          <nb-icon icon="inbox-outline"></nb-icon>
+          <p>Aucun employé trouvé</p>
+        </div>
+      </div>
+    </nb-card-body>
+  </nb-card>
 </div>

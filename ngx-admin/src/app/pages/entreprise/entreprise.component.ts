@@ -1,8 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { NgForm } from '@angular/forms';
-import { LocalDataSource } from 'ng2-smart-table';
-import { MatDialog } from '@angular/material/dialog';
+import { NbDialogService } from '@nebular/theme';
 import { SmartTableData } from '../../@core/data/smart-table';
 import { Entreprise } from '../../model/entreprise';
 import { EntrepriseService } from '../../services/entreprise.service';
@@ -20,10 +18,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./entreprise.component.scss'],
 })
 export class EntrepriseComponent implements OnInit {
-  public entreprises: Entreprise[];
+  public entreprises: Entreprise[] = [];
+  public filteredEntreprises: Entreprise[] = [];
   public editEntreprise: Entreprise;
   entreprise: Entreprise;
-  // public deleteEntreprise: Entreprise;
+  searchTerm: string = '';
 
   constructor(
     private _router: Router,
@@ -32,20 +31,22 @@ export class EntrepriseComponent implements OnInit {
     private entrepriseService: EntrepriseService,
     private directionService: DirectionService,
     private employeService: EmployeService,
-    private matDialog: MatDialog,
+    private dialogService: NbDialogService,
     private excelService: ExcelService,
   ) {}
 
   ngOnInit() {
     this.getEntreprises();
-    console.log('hello');
   }
+
+  /**
+   * Charge la liste des entreprises depuis le backend
+   */
   public getEntreprises(): void {
     this.entrepriseService.getEntreprises().subscribe(
       (response: Entreprise[]) => {
-        // store entreprises and ensure small UI helpers
         this.entreprises = (response || []).map(e => ({ ...e, _expanded: false, _detailsLoaded: false }));
-        console.log(this.entreprises);
+        this.filteredEntreprises = [...this.entreprises];
       },
       (error: HttpErrorResponse) => {
         alert(error.message);
@@ -55,26 +56,64 @@ export class EntrepriseComponent implements OnInit {
     );
   }
 
-  // Toggle details panel for an entreprise: load directions and employes if needed
-  toggleDetails(ent: Entreprise) {
+  /**
+   * Applique le filtre de recherche sur les entreprises
+   */
+  applySearch(): void {
+    const term = (this.searchTerm || '').toLowerCase().trim();
+    if (!term) {
+      this.filteredEntreprises = [...this.entreprises];
+      return;
+    }
+    this.filteredEntreprises = this.entreprises.filter(
+      e => (e.name || '').toLowerCase().includes(term) || (e.raisonSocial || '').toLowerCase().includes(term),
+    );
+  }
+
+  /**
+   * Calcul des KPIs
+   */
+  getTotalDirections(): number {
+    return this.entreprises.reduce((sum, e) => {
+      return sum + ((e as any)._details?.directions?.length || 0);
+    }, 0);
+  }
+
+  getTotalEmployes(): number {
+    return this.entreprises.reduce((sum, e) => {
+      return sum + ((e as any)._employes?.length || 0);
+    }, 0);
+  }
+
+  getAverageEmployes(): string {
+    if (!this.entreprises || this.entreprises.length === 0) return '0';
+    const total = this.getTotalEmployes();
+    const loaded = this.entreprises.filter(e => (e as any)._detailsLoaded).length;
+    if (loaded === 0) return '-';
+    return (total / loaded).toFixed(1);
+  }
+
+  /**
+   * Bascule l'affichage des détails d'une entreprise (directions et employés)
+   */
+  toggleDetails(ent: Entreprise): void {
     (ent as any)._expanded = !(ent as any)._expanded;
     if ((ent as any)._expanded && !(ent as any)._detailsLoaded) {
       const id = ent.id;
-      // load entreprise full data (to get employes) and directions for this entreprise
       this.entrepriseService.getEnrepriseById(id).subscribe(
         full => {
           (ent as any)._employes = (full as any).employes || [];
-          // compute stable image URL for each employee if possible
+          // Compute stable image URL for each employee
           for (const emp of (ent as any)._employes) {
             const filename =
               (emp as any).image || (emp as any).imageUrl || (emp as any).imageName || (emp as any).photo;
             (emp as any)._imageUrl = filename
               ? this.employeService.getEmployeeImageUrl(filename)
-              : 'assets/default-avatar.png';
+              : 'assets/images/default-avatar.png';
           }
           this.directionService.getDirectionsNamesByEntreprise(id).subscribe(
             dirs => {
-              // build mapping of direction -> employees
+              // Build mapping of direction ID -> employees array
               const map = {} as { [key: number]: any[] };
               for (const d of dirs) {
                 map[d.id] = [];
@@ -89,49 +128,68 @@ export class EntrepriseComponent implements OnInit {
               (ent as any)._details = { directions: dirs, map };
               (ent as any)._detailsLoaded = true;
             },
-            err => {
-              console.error('Could not load directions for entreprise', err);
+            _err => {
+              console.error('Could not load directions for entreprise', _err);
             },
           );
         },
-        err => {
-          console.error('Could not load entreprise details', err);
+        _err => {
+          console.error('Could not load entreprise details', _err);
         },
       );
     }
   }
+  /**
+   * Confirme et supprime une entreprise
+   */
+  confirmDelete(entreprise: Entreprise): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer l'entreprise "${entreprise.name}" ?`)) {
+      this.deleteEntr(entreprise.id);
+    }
+  }
+
   deleteEntr(id: number): void {
     this.entrepriseService.deleteEntreprise(id).subscribe(
       () => {
-        this.entrepriseService.getEntreprises().subscribe(
-          data => (this.entreprises = data),
-          err => {
-            this._router.navigateByUrl('/auth');
-            this.tokenStorage.signOut();
-          },
-        );
+        this.getEntreprises();
       },
-      err => {
+      _err => {
         this._router.navigateByUrl('/auth');
         this.tokenStorage.signOut();
       },
     );
   }
-  onOpenDialogClick() {
-    this.matDialog.open(AddEntrepriseComponent);
+
+  /**
+   * Ouvre le dialogue d'ajout d'entreprise
+   */
+  onOpenDialogClick(): void {
+    this.dialogService.open(AddEntrepriseComponent).onClose.subscribe(() => {
+      this.getEntreprises();
+    });
   }
-  updateEntreprise(idEntreprise: number) {
+
+  /**
+   * Ouvre le dialogue de modification d'entreprise
+   */
+  updateEntreprise(idEntreprise: number): void {
     this.entreprise = this.entrepriseService.sendEventData(idEntreprise);
-    this.matDialog.open(UpdateEntrepriseComponent);
+    this.dialogService.open(UpdateEntrepriseComponent).onClose.subscribe(() => {
+      this.getEntreprises();
+    });
   }
 
+  /**
+   * Exporte la liste des entreprises en Excel
+   */
   exportAsXLSX(): void {
-    this.excelService.exportAsExcelFile(this.entreprises, 'listentreprise');
-  }
-
-  // add loaded class to image to trigger fade-in
-  onAvatarLoad(event: Event) {
-    const img = event.target as HTMLImageElement;
-    if (img && img.classList) img.classList.add('loaded');
+    const dataToExport = this.filteredEntreprises.map(e => ({
+      ID: e.id,
+      Nom: e.name,
+      'Raison Sociale': e.raisonSocial,
+      Directions: (e as any)._details?.directions?.length || '-',
+      Employés: (e as any)._employes?.length || '-',
+    }));
+    this.excelService.exportAsExcelFile(dataToExport, 'entreprises');
   }
 }

@@ -1,0 +1,100 @@
+@import '../../../../@theme/styles/themes';
+
+@include nb-install-component() {
+  nb-card {
+    margin: 0;
+    max-width: 700px;
+  }
+
+  .budget-details {
+    .detail-section {
+      margin-bottom: 2rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h6 {
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid nb-theme(border-basic-color-3);
+        color: nb-theme(text-basic-color);
+        font-weight: 600;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+
+        @media (max-width: 576px) {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-item {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          &.full-width {
+            grid-column: 1 / -1;
+          }
+
+          .label {
+            font-size: 0.875rem;
+            color: nb-theme(text-hint-color);
+            font-weight: 500;
+          }
+
+          .value {
+            color: nb-theme(text-basic-color);
+            font-size: 1rem;
+
+            &.highlight {
+              color: nb-theme(color-primary-500);
+              font-weight: 600;
+              font-size: 1.125rem;
+            }
+          }
+        }
+      }
+
+      .employee-info {
+        padding: 1rem;
+        background: nb-theme(background-basic-color-2);
+        border-radius: nb-theme(radius);
+      }
+    }
+  }
+
+  .confirm-delete {
+    text-align: center;
+    padding: 2rem;
+
+    nb-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 0.5rem;
+      color: nb-theme(text-basic-color);
+
+      &.budget-info {
+        font-size: 1.125rem;
+        margin: 1rem 0;
+      }
+
+      &.warning {
+        color: nb-theme(text-hint-color);
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}
