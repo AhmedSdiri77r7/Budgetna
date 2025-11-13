@@ -3,7 +3,7 @@ import { NbThemeService, NbColorHelper } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-chartjs-radar',
-  template: ` <chart type="radar" [data]="data" [options]="options"></chart> `,
+  template: ' <chart type="radar" [data]="data" [options]="options"></chart> ',
 })
 export class ChartjsRadarComponent implements OnDestroy {
   options: any;

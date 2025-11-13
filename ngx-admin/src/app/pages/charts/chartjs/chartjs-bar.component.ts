@@ -4,7 +4,7 @@ import { BudgetInitial } from '../../../model/budgetInitial';
 
 @Component({
   selector: 'ngx-chartjs-bar',
-  template: ` <chart type="bar" [data]="data" [options]="options"></chart> `,
+  template: ' <chart type="bar" [data]="data" [options]="options"></chart> ',
 })
 export class ChartjsBarComponent implements OnDestroy, OnChanges {
   @Input() budgets: BudgetInitial[] = [];

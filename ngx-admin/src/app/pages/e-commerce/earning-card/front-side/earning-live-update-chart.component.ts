@@ -6,7 +6,7 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 @Component({
   selector: 'ngx-earning-live-update-chart',
   styleUrls: ['earning-card-front.component.scss'],
-  template: ` <div echarts class="echart" [options]="option" (chartInit)="onChartInit($event)"></div> `,
+  template: ' <div echarts class="echart" [options]="option" (chartInit)="onChartInit($event)"></div> ',
 })
 export class EarningLiveUpdateChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   private alive = true;

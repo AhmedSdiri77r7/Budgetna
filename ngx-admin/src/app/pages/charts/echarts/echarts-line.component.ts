@@ -3,7 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-echarts-line',
-  template: ` <div echarts [options]="options" class="echart"></div> `,
+  template: ' <div echarts [options]="options" class="echart"></div> ',
 })
 export class EchartsLineComponent implements AfterViewInit, OnDestroy {
   options: any = {};

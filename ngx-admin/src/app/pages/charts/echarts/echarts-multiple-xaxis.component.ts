@@ -3,7 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-echarts-multiple-xaxis',
-  template: ` <div echarts [options]="options" class="echart"></div> `,
+  template: ' <div echarts [options]="options" class="echart"></div> ',
 })
 export class EchartsMultipleXaxisComponent implements AfterViewInit, OnDestroy {
   options: any = {};

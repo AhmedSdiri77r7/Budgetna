@@ -3,7 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-echarts-bar-animation',
-  template: ` <div echarts [options]="options" class="echart"></div> `,
+  template: ' <div echarts [options]="options" class="echart"></div> ',
 })
 export class EchartsBarAnimationComponent implements AfterViewInit, OnDestroy {
   options: any = {};

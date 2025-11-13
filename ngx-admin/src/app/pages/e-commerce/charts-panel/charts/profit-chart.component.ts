@@ -8,7 +8,7 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 @Component({
   selector: 'ngx-profit-chart',
   styleUrls: ['./charts-common.component.scss'],
-  template: ` <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div> `,
+  template: ' <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div> ',
 })
 export class ProfitChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input()

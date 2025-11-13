@@ -5,7 +5,7 @@ import { LayoutService } from '../../../../@core/utils/layout.service';
 
 @Component({
   selector: 'ngx-stats-bar-animation-chart',
-  template: ` <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div> `,
+  template: ' <div echarts [options]="options" class="echart" (chartInit)="onChartInit($event)"></div> ',
 })
 export class StatsBarAnimationChartComponent implements AfterViewInit, OnDestroy {
   private alive = true;

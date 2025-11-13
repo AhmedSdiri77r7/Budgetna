@@ -3,7 +3,7 @@ import { NbThemeService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-chartjs-pie',
-  template: ` <chart type="pie" [data]="data" [options]="options"></chart> `,
+  template: ' <chart type="pie" [data]="data" [options]="options"></chart> ',
 })
 export class ChartjsPieComponent implements OnChanges, OnDestroy {
   @Input() budgetData: number[] = [];

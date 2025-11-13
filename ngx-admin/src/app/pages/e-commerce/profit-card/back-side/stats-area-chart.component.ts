@@ -6,7 +6,7 @@ import { LayoutService } from '../../../../@core/utils';
 @Component({
   selector: 'ngx-stats-ares-chart',
   styleUrls: ['stats-card-back.component.scss'],
-  template: ` <div echarts [options]="option" class="echart" (chartInit)="onChartInit($event)"></div> `,
+  template: ' <div echarts [options]="option" class="echart" (chartInit)="onChartInit($event)"></div> ',
 })
 export class StatsAreaChartComponent implements AfterViewInit, OnDestroy {
   private alive = true;

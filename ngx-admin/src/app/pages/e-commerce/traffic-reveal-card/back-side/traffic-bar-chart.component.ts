@@ -7,7 +7,7 @@ declare const echarts: any;
 
 @Component({
   selector: 'ngx-traffic-bar-chart',
-  template: ` <div echarts [options]="option" class="echart" (chartInit)="onChartInit($event)"></div> `,
+  template: ' <div echarts [options]="option" class="echart" (chartInit)="onChartInit($event)"></div> ',
 })
 export class TrafficBarChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() data: number[];
