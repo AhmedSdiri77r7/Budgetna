@@ -59,7 +59,8 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: ngx-admin/package-lock.json
+          # make path explicit (relative to repository root)
+          cache-dependency-path: ./ngx-admin/package-lock.json
 
       - name: ⚡ Install Angular dependencies
         working-directory: ./ngx-admin
@@ -74,7 +75,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
-          path: ./ngx-admin/dist/ngx-admin
+          # upload the built static files (include everything under the dist folder)
+          path: ./ngx-admin/dist/ngx-admin/**
           retention-days: 7
 
   # ----------------------------
@@ -128,12 +130,15 @@ jobs:
           name: frontend-dist
           path: frontend-artifact
 
+      # The downloaded artifact will be available under frontend-artifact/ngx-admin
+      # Configure the static web apps deploy action to upload the already-built files.
       - name: 🚀 Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEBAPP_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "ngx-admin"
-          # The build artifact was uploaded from ./ngx-admin/dist/ngx-admin, so the downloaded artifact root contains ngx-admin
-          output_location: "frontend-artifact/ngx-admin"
+          # point app_location to the downloaded build artifact root
+          app_location: "frontend-artifact/ngx-admin"
+          # since we're uploading already-built files, set output_location to the root of that artifact
+          output_location: "."
