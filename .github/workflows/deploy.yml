@@ -7,6 +7,11 @@ on:
     branches: [main, develop]
   workflow_dispatch:
 
+# Minimal explicit permissions for actions that need them
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   # ----------------------------
   # Build Backend (Spring Boot)
@@ -85,6 +90,12 @@ jobs:
       - name: 📦 Checkout repository
         uses: actions/checkout@v3
 
+      - name: ⬇️ Download backend artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-jar
+          path: backend-artifact
+
       - name: ☕ Setup Java 17
         uses: actions/setup-java@v3
         with:
@@ -96,7 +107,7 @@ jobs:
         with:
           app-name: budget-backend-ahmed
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ./budget-backend-ahmed/target/*.jar
+          package: ./backend-artifact/*.jar
 
   # ----------------------------
   # Deploy Frontend to Azure Static Web App
@@ -111,18 +122,11 @@ jobs:
       - name: 📦 Checkout repository
         uses: actions/checkout@v3
 
-      - name: 🧩 Setup Node.js
-        uses: actions/setup-node@v3
+      - name: ⬇️ Download frontend artifact
+        uses: actions/download-artifact@v4
         with:
-          node-version: '18'
-
-      - name: ⚡ Install Angular dependencies
-        working-directory: ./ngx-admin
-        run: npm install --legacy-peer-deps
-
-      - name: 🛠️ Build Angular
-        working-directory: ./ngx-admin
-        run: npx ng build --configuration production --aot
+          name: frontend-dist
+          path: frontend-artifact
 
       - name: 🚀 Deploy to Azure Static Web App
         uses: Azure/static-web-apps-deploy@v1
@@ -131,4 +135,5 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "ngx-admin"
-          output_location: "ngx-admin/dist/ngx-admin"
+          # The build artifact was uploaded from ./ngx-admin/dist/ngx-admin, so the downloaded artifact root contains ngx-admin
+          output_location: "frontend-artifact/ngx-admin"
